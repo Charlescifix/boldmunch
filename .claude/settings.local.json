@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(del home_backup.html home_clean.html)",
+      "Bash(rm:*)",
+      "Bash(start home.html)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []

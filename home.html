@@ -10,10 +10,10 @@
   <style>
     :root{
       --cream:#FFF9F3; /* background tone */
-      --gold:#D4A574; /* luxury accent */
-      --bronze:#8B6914; /* text accent */
-      --burgundy:#8B2635; /* primary CTA */
-      --sage:#9CAF88; /* delivery days */
+      --gold:#F1C40F; /* logo yellow accent */
+      --bronze:#8B4513; /* warm brown text */
+      --burgundy:#E67E22; /* warm orange CTA */
+      --sage:#27AE60; /* fresh green delivery */
       --charcoal:#1A1A1A; /* main text */
       --glass: rgba(255,255,255,0.7);
       --glass-dark: rgba(255,255,255,0.45);
@@ -21,7 +21,7 @@
       --radius-sm: 16px;
       --shadow: 0 12px 40px rgba(0,0,0,.15);
       --shadow-soft: 0 8px 24px rgba(0,0,0,.1);
-      --shadow-luxury: 0 16px 50px rgba(139,38,53,.2);
+      --shadow-luxury: 0 16px 50px rgba(230,126,34,.2);
     }
     *{box-sizing:border-box}
     html,body{margin:0;background:linear-gradient(180deg,var(--cream),#ffffff);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--charcoal)}
@@ -50,9 +50,9 @@
     /* Delivery pill - attention grabbing with deadline */
     .delivery-pill{
       display:flex;flex-direction:column;align-items:center;gap:6px;
-      background:linear-gradient(135deg,#FF4500,#FF6B35);
+      background:linear-gradient(135deg,#F39C12,var(--gold));
       color:#fff;padding:16px 22px;border-radius:20px;font-weight:900;font-size:14px;
-      box-shadow:0 10px 28px rgba(255,69,0,0.4), inset -4px -4px 10px rgba(255,255,255,0.25), inset 4px 4px 10px rgba(0,0,0,0.18);
+      box-shadow:0 10px 28px rgba(241,196,15,0.4), inset -4px -4px 10px rgba(255,255,255,0.25), inset 4px 4px 10px rgba(0,0,0,0.18);
       border:2px solid rgba(255,255,255,0.35);backdrop-filter:blur(18px);
       animation:deliveryBounce 2.5s infinite ease-in-out;
       transition:transform .2s ease;cursor:default;text-transform:uppercase;letter-spacing:1px;
@@ -66,9 +66,9 @@
     .delivery-main{font-size:16px;font-weight:900}
     .delivery-deadline{
       font-size:11px;font-weight:700;
-      background:linear-gradient(135deg,#6A0DAD,#8B5CF6);
+      background:linear-gradient(135deg,#8B4513,#A0522D);
       color:#fff;padding:4px 10px;border-radius:999px;
-      box-shadow:0 3px 8px rgba(106,13,173,0.35);
+      box-shadow:0 3px 8px rgba(139,69,19,0.35);
       border:1px solid rgba(255,255,255,0.2);
       text-transform:none;letter-spacing:0.5px
     }
@@ -116,24 +116,24 @@
     /* Steppers */
     .stepper{display:flex;align-items:center;gap:8px}
     .pill{min-width:38px;height:38px;border-radius:14px;display:grid;place-items:center;font-weight:800;cursor:pointer;
-      background:linear-gradient(145deg, #ffffff 0%, #f0f0f0 100%);
-      box-shadow: inset -4px -4px 8px rgba(255,255,255,0.7), inset 4px 4px 8px rgba(0,0,0,0.08);
-      user-select:none;transition:transform .1s ease
+      background:linear-gradient(145deg, #FFFFFF 0%, #F8F9FA 100%);
+      box-shadow: inset -4px -4px 8px rgba(255,255,255,0.9), inset 4px 4px 8px rgba(139,69,19,0.15);
+      user-select:none;transition:transform .1s ease;color:var(--charcoal);
     }
     .pill:active{transform:scale(.96)}
     .qty{min-width:40px;text-align:center;font-weight:800}
 
     /* CTA buttons (luxury) */
     .btn{
-      background:linear-gradient(145deg,var(--burgundy),#A03243);
+      background:linear-gradient(145deg,var(--gold),#F39C12);
       color:#fff;font-weight:800;border:none;padding:14px 20px;border-radius:20px;cursor:pointer;
-      box-shadow: inset -4px -4px 10px rgba(255,255,255,0.25), inset 4px 4px 10px rgba(0,0,0,0.2), var(--shadow-luxury);
+      box-shadow: inset -4px -4px 10px rgba(255,255,255,0.3), inset 4px 4px 10px rgba(241,196,15,0.2), var(--shadow-luxury);
       transition:transform .15s ease, box-shadow .3s ease;letter-spacing:0.5px
     }
     .btn:active{transform:scale(.97)}
     .btn-secondary{
-      background:linear-gradient(145deg,#ffffff,#f8f8f8);color:var(--charcoal);
-      box-shadow: inset -4px -4px 10px rgba(255,255,255,0.9), inset 4px 4px 10px rgba(0,0,0,0.1);
+      background:linear-gradient(145deg,#FFFFFF,#F8F9FA);color:var(--charcoal);
+      box-shadow: inset -4px -4px 10px rgba(255,255,255,0.9), inset 4px 4px 10px rgba(139,69,19,0.15);
       border-radius:20px;padding:14px 20px;letter-spacing:0.5px;font-weight:700
     }
 
@@ -146,16 +146,16 @@
       background:var(--glass);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.65);
       border-radius:22px;padding:12px 14px;box-shadow:var(--shadow)
     }
-    .chip{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;font-weight:800;background:rgba(212,165,116,.25);border:1px solid rgba(212,165,116,.7);color:var(--bronze)}
+    .chip{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:999px;font-weight:800;background:rgba(241,196,15,.25);border:1px solid rgba(241,196,15,.7);color:var(--gold)}
 
     /* Size selection buttons */
     .size-selector{display:flex;gap:6px;margin:6px 0;justify-content:center}
     .size-btn{
-      padding:8px 16px;font-size:12px;font-weight:700;border:1px solid rgba(0,0,0,.12);
-      border-radius:12px;background:linear-gradient(145deg,#fff,#f4f4f4);cursor:pointer;transition:all .2s ease;
-      min-width:60px;text-align:center
+      padding:8px 16px;font-size:12px;font-weight:700;border:1px solid rgba(241,196,15,.3);
+      border-radius:12px;background:linear-gradient(145deg,#FFFFFF,#F8F9FA);cursor:pointer;transition:all .2s ease;
+      min-width:60px;text-align:center;color:var(--charcoal);
     }
-    .size-btn.active{background:linear-gradient(145deg,var(--burgundy),#A03243);color:#fff;border-color:transparent;box-shadow:var(--shadow-luxury)}
+    .size-btn.active{background:linear-gradient(145deg,var(--gold),#F39C12);color:#fff;border-color:transparent;box-shadow:var(--shadow-luxury)}
     .size-btn:hover{transform:translateY(-1px)}
 
     /* Social Icons - Subtle Logo Style */
@@ -165,19 +165,19 @@
       gap: 4px;
       padding: 6px 10px;
       background: rgba(255,248,220,0.4);
-      border: 1px solid rgba(255,193,7,0.2);
+      border: 1px solid rgba(241,196,15,0.2);
       border-radius: 16px;
       text-decoration: none;
-      color: rgba(139,105,20,0.7);
+      color: var(--bronze);
       font-weight: 600;
       font-size: 12px;
-      box-shadow: 0 2px 8px rgba(255,193,7,0.1);
+      box-shadow: 0 2px 8px rgba(241,196,15,0.1);
       transition: all 0.3s ease;
       backdrop-filter: blur(8px);
     }
     .social-link:hover {
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(255,193,7,0.2);
+      box-shadow: 0 4px 12px rgba(241,196,15,0.2);
       background: rgba(255,248,220,0.6);
       color: var(--bronze);
     }
@@ -194,9 +194,9 @@
       margin-top: 24px;
       padding: 20px;
       background: linear-gradient(135deg, rgba(255,248,220,0.6), rgba(255,235,180,0.4));
-      border: 2px solid rgba(255,193,7,0.2);
+      border: 2px solid rgba(241,196,15,0.2);
       border-radius: var(--radius-lg);
-      box-shadow: 0 8px 32px rgba(255,193,7,0.15);
+      box-shadow: 0 8px 32px rgba(241,196,15,0.15);
       text-align: center;
       position: relative;
     }
@@ -208,15 +208,15 @@
       align-items: center;
     }
     .special-btn {
-      background: linear-gradient(145deg, #FFD700, #FFA500);
-      color: #8B4513;
+      background: linear-gradient(145deg, var(--gold), #F39C12);
+      color: #fff;
       font-weight: 800;
       padding: 12px 16px;
       border-radius: 999px;
       border: none;
       cursor: pointer;
       font-size: 13px;
-      box-shadow: 0 4px 16px rgba(255,215,0,0.3);
+      box-shadow: 0 4px 16px rgba(241,196,15,0.3);
       transition: transform 0.25s ease;
       letter-spacing: 0.3px;
       text-transform: uppercase;
@@ -227,10 +227,10 @@
     }
     .special-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(255,215,0,0.4);
+      box-shadow: 0 6px 20px rgba(241,196,15,0.4);
     }
     .ingredients-btn {
-      background: linear-gradient(145deg, var(--sage), #A8C090);
+      background: linear-gradient(145deg, #8B4513, #A0522D);
       color: #fff;
       font-weight: 700;
       padding: 12px 16px;
@@ -238,7 +238,7 @@
       border: none;
       cursor: pointer;
       font-size: 13px;
-      box-shadow: 0 4px 16px rgba(156,175,136,0.3);
+      box-shadow: 0 4px 16px rgba(139,69,19,0.3);
       transition: transform 0.25s ease;
       letter-spacing: 0.3px;
       border: 2px solid rgba(255,255,255,0.3);
@@ -248,7 +248,7 @@
     }
     .ingredients-btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(156,175,136,0.4);
+      box-shadow: 0 6px 20px rgba(139,69,19,0.4);
     }
     .powered-by {
       position: absolute;
@@ -263,8 +263,8 @@
     /* Mini Banana Bread Enhanced UX */
     .mini-card {
       background: linear-gradient(135deg, rgba(255,248,220,0.9), rgba(255,235,180,0.7));
-      border: 2px solid rgba(255,193,7,0.4);
-      box-shadow: 0 12px 40px rgba(255,193,7,0.25);
+      border: 2px solid rgba(241,196,15,0.4);
+      box-shadow: 0 12px 40px rgba(241,196,15,0.25);
       position: relative;
       overflow: visible;
       transition: all 0.4s ease;
@@ -286,7 +286,7 @@
     }
     .mini-card.expanded {
       transform: scale(1.02);
-      box-shadow: 0 16px 50px rgba(255,193,7,0.35);
+      box-shadow: 0 16px 50px rgba(241,196,15,0.35);
       z-index: 10;
     }
     .mini-selector-container {
@@ -294,14 +294,14 @@
       padding: 12px;
       background: rgba(255,255,255,0.6);
       border-radius: 12px;
-      border: 1px solid rgba(255,193,7,0.3);
+      border: 1px solid rgba(241,196,15,0.3);
     }
     .variety-dropdown {
       width: 100%;
       padding: 10px 12px;
-      border: 2px solid rgba(255,193,7,0.3);
+      border: 2px solid rgba(241,196,15,0.3);
       border-radius: 10px;
-      background: linear-gradient(145deg, #fff, #fafafa);
+      background: linear-gradient(145deg, #FFFFFF, #F8F9FA);
       font-weight: 600;
       font-size: 13px;
       color: var(--charcoal);
@@ -480,12 +480,12 @@
   <header>
     <div class="container hero">
       <div class="brand">
-        <img src="Bold Munch Logo.PNG" alt="Bold Munch Logo" class="logo" />
+        <img src="new_logo.png" alt="Bold Munch Logo" class="logo" />
         <div>
           <div style="display:flex;align-items:center;gap:10px">
             <span style="font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:1px">BOLD MUNCH</span>
           </div>
-          <small>Nutella breads • Chocolate treats • Meat pies • Puff puff</small>
+          <small>PREMUIM HANDMADE GOODNESS</small>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
@@ -537,7 +537,7 @@
             📋 View Ingredients
           </button>
         </div>
-        <div class="powered-by">Powered by Gen3block AI</div>
+        <div class="powered-by">Powered by <a href="https://www.gen3block.com" target="_blank" style="color: inherit; text-decoration: none;">Gen3block AI</a></div>
       </div>
     </section>
   </main>
@@ -548,7 +548,7 @@
       "Classic Banana Bread",
       "Double Chocolate Banana Bread",
       "Nutella Banana Bread",
-      "Chocolate Banana Bread",
+      "Carrot Banana Bread",
       "Coconut Bounty Banana Bread",
       "Nutty Banana Bread",
       "Oats Crumble Banana Bread",
@@ -586,7 +586,7 @@
       {
         id:"nutella-classic",
         name:"Nutella Banana Bread",
-        desc:"Rich Nutella swirl in fluffy banana bread.",
+        desc:"Rich Nutella swirl in every slice.",
         prices:{medium:7.5, maxi:9.5},
         img:"Nutella Bread 2.jpg",
         type:"bread",
@@ -594,11 +594,11 @@
         priority:1
       },
       {
-        id:"choco-banana",
-        name:"Chocolate Banana Bread",
-        desc:"Perfect blend of banana & chocolate.",
+        id:"carrot-banana",
+        name:"Carrot Banana Bread",
+        desc:"Packed with Carrot, Raisins and Walnuts.",
         prices:{medium:7.5, maxi:9.5},
-        img:"chocolate banana bread.jpeg",
+        img:"carrot banana bread.jpeg",
         type:"bread",
         sizes:["medium","maxi"],
         priority:1
@@ -607,7 +607,7 @@
       {
         id:"banana-coconut",
         name:"Coconut Bounty Banana Bread",
-        desc:"Tropical coconut meets banana bliss.",
+        desc:"Tropical Coconut and Chocoloate Delight.",
         prices:{medium:7.5, maxi:9.5},
         img:"Coconut bounty banana bread.PNG",
         type:"bread",
@@ -617,7 +617,7 @@
       {
         id:"banana-nutty",
         name:"Nutty Banana Bread",
-        desc:"Crunchy nuts in moist banana bread.",
+        desc:"Loaded with Crunchy Nuts.",
         prices:{medium:7.0, maxi:9.0},
         img:"Nutty banana bread.PNG",
         type:"bread",
@@ -627,7 +627,7 @@
       {
         id:"banana-oats",
         name:"Oats Crumble Banana Bread",
-        desc:"Hearty oats with banana goodness.",
+        desc:"Hearty oats topping with a buttery crunch.",
         prices:{medium:7.0, maxi:9.0},
         img:"Oats crumble banana bread.JPG",
         type:"bread",
@@ -637,7 +637,7 @@
       {
         id:"banana-oreo",
         name:"Oreo Banana Bread",
-        desc:"Oreo cookies meet banana perfection.",
+        desc:"Chunks of Oreo in every bite.",
         prices:{medium:7.5, maxi:9.5},
         img:"Oreos Banana bread.JPG",
         type:"bread",
@@ -667,7 +667,7 @@
       {
         id:"meatpie-classic",
         name:"Traditional Meat Pie",
-        desc:"Golden pastry with savory filling.",
+        desc:"Golden pastry with juicy beef filling.",
         price:4.5,
         img:"MEATPIE.PNG",
         type:"minimum",
@@ -677,7 +677,7 @@
       {
         id:"puff-puff",
         name:"Nigerian Puff Puff",
-        desc:"Sweet, fluffy traditional donuts.",
+        desc:"Donut vibes, upgraded.",
         price:3.5,
         img:"Puff Puff.jpg",
         type:"minimum",
@@ -763,6 +763,11 @@
         
         const defaultQty = p.minOrder || 0;
         
+        // Calculate total minimum order price for minimum order items
+        const priceDisplay = p.type === 'minimum' ? 
+          `${money(currentPrice)} each<br><small style="color: var(--bronze); font-weight: 600;">Min order: ${p.minOrder} (${money(currentPrice * p.minOrder)} total)</small>` :
+          money(currentPrice);
+        
         card.innerHTML = `
           <img class="card-img" src="${p.img}" alt="${p.name}">
           <div class="card-body">
@@ -771,7 +776,7 @@
             ${sizeSelector}
             ${miniSelector}
             <div style="display:flex;align-items:center;justify-content:space-between;gap:10px" class="mt-8">
-              <div class="price" data-product="${p.id}">${money(currentPrice)}${p.type === 'minimum' ? ' each' : ''}</div>
+              <div class="price" data-product="${p.id}">${priceDisplay}</div>
               <div class="stepper" data-id="${p.id}">
                 <div class="pill minus" aria-label="decrease quantity">–</div>
                 <div class="qty" aria-live="polite">${defaultQty}</div>
