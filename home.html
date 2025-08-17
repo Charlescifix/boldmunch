@@ -50,10 +50,10 @@
     /* Delivery pill - attention grabbing with deadline */
     .delivery-pill{
       display:flex;flex-direction:column;align-items:center;gap:6px;
-      background:linear-gradient(135deg,#F39C12,var(--gold));
-      color:#fff;padding:16px 22px;border-radius:20px;font-weight:900;font-size:14px;
-      box-shadow:0 10px 28px rgba(241,196,15,0.4), inset -4px -4px 10px rgba(255,255,255,0.25), inset 4px 4px 10px rgba(0,0,0,0.18);
-      border:2px solid rgba(255,255,255,0.35);backdrop-filter:blur(18px);
+      background:linear-gradient(135deg,#FFD700,#FFC107);
+      color:var(--charcoal);padding:16px 22px;border-radius:20px;font-weight:900;font-size:14px;
+      box-shadow:0 10px 28px rgba(255,215,0,0.5), inset -4px -4px 10px rgba(255,255,255,0.3), inset 4px 4px 10px rgba(0,0,0,0.15);
+      border:2px solid rgba(255,255,255,0.4);backdrop-filter:blur(18px);
       animation:deliveryBounce 2.5s infinite ease-in-out;
       transition:transform .2s ease;cursor:default;text-transform:uppercase;letter-spacing:1px;
       position:relative;overflow:hidden
@@ -66,10 +66,10 @@
     .delivery-main{font-size:16px;font-weight:900}
     .delivery-deadline{
       font-size:11px;font-weight:700;
-      background:linear-gradient(135deg,#8B4513,#A0522D);
-      color:#fff;padding:4px 10px;border-radius:999px;
-      box-shadow:0 3px 8px rgba(139,69,19,0.35);
-      border:1px solid rgba(255,255,255,0.2);
+      background:var(--cream);
+      color:var(--charcoal);padding:4px 10px;border-radius:999px;
+      box-shadow:0 3px 8px rgba(139,69,19,0.15);
+      border:2px solid var(--gold);
       text-transform:none;letter-spacing:0.5px
     }
     .delivery-pill:hover{transform:scale(1.03)}
@@ -125,9 +125,8 @@
 
     /* CTA buttons (luxury) */
     .btn{
-      background:linear-gradient(145deg,#E67E22,#D35400);
-      color:#fff;font-weight:800;border:none;padding:14px 20px;border-radius:20px;cursor:pointer;
-      box-shadow: inset -4px -4px 10px rgba(255,255,255,0.3), inset 4px 4px 10px rgba(211,84,0,0.2), var(--shadow-luxury);
+      background:transparent;
+      color:var(--charcoal);font-weight:800;border:2px solid var(--gold);padding:14px 20px;border-radius:20px;cursor:pointer;
       transition:transform .15s ease, box-shadow .3s ease;letter-spacing:0.5px
     }
     .btn:active{transform:scale(.97)}
@@ -155,7 +154,7 @@
       border-radius:12px;background:linear-gradient(145deg,#FFFFFF,#F8F9FA);cursor:pointer;transition:all .2s ease;
       min-width:60px;text-align:center;color:var(--charcoal);
     }
-    .size-btn.active{background:linear-gradient(145deg,#E67E22,#D35400);color:#fff;border-color:transparent;box-shadow:var(--shadow-luxury)}
+    .size-btn.active{background:linear-gradient(145deg,#FFD700,#FFC107);color:var(--charcoal);border-color:transparent;box-shadow:0 4px 15px rgba(255,215,0,0.4);}
     .size-btn:hover{transform:translateY(-1px)}
 
     /* Social Icons - Subtle Logo Style */
@@ -193,10 +192,10 @@
     .special-services {
       margin-top: 24px;
       padding: 20px;
-      background: linear-gradient(135deg, rgba(255,248,220,0.6), rgba(255,235,180,0.4));
-      border: 2px solid rgba(241,196,15,0.2);
+      background: linear-gradient(135deg, rgba(255,235,180,0.8), rgba(245,215,140,0.6));
+      border: 2px solid rgba(241,196,15,0.3);
       border-radius: var(--radius-lg);
-      box-shadow: 0 8px 32px rgba(241,196,15,0.15);
+      box-shadow: 0 8px 32px rgba(241,196,15,0.25);
       text-align: center;
       position: relative;
     }
@@ -508,7 +507,6 @@
         <div class="delivery-pill" title="We deliver on Saturdays">
           <div class="delivery-main">
             Delivery Day: Saturdays
-            <span class="arrow-bounce" style="margin-left:8px">➜</span>
           </div>
           <div class="delivery-deadline">
             📅 Order before 9AM Friday
@@ -555,7 +553,8 @@
       "Oreo Banana Bread"
     ];
     
-    const MINI_PRICE = 3.5;
+    const MINI_CLASSIC_PRICE = 2;
+    const MINI_OTHER_PRICE = 2.5;
 
     // State for mini selections
     const miniSelections = new Map(); // productId -> array of {variety, size, price}
@@ -567,7 +566,7 @@
         id:"banana-classic",
         name:"Classic Banana Bread",
         desc:"Traditional banana bread perfection.",
-        prices:{medium:6.5, maxi:8.5},
+        prices:{medium:11, maxi:17},
         img:"Classic banana bread.jpg",
         type:"bread",
         sizes:["medium","maxi"],
@@ -577,7 +576,7 @@
         id:"double-choc",
         name:"Double Chocolate Banana Bread",
         desc:"Ultra-rich chocolate banana bread dream.",
-        prices:{medium:8.5, maxi:10.5},
+        prices:{medium:14, maxi:21},
         img:"Double Chocolate Bread.jpg",
         type:"bread",
         sizes:["medium","maxi"],
@@ -587,7 +586,7 @@
         id:"nutella-classic",
         name:"Nutella Banana Bread",
         desc:"Rich Nutella swirl in every slice.",
-        prices:{medium:7.5, maxi:9.5},
+        prices:{medium:14, maxi:21},
         img:"Nutella Bread 2.jpg",
         type:"bread",
         sizes:["medium","maxi"],
@@ -597,7 +596,7 @@
         id:"carrot-banana",
         name:"Carrot Banana Bread",
         desc:"Packed with Carrot, Raisins and Walnuts.",
-        prices:{medium:7.5, maxi:9.5},
+        prices:{medium:13, maxi:20},
         img:"carrot banana bread.jpeg",
         type:"bread",
         sizes:["medium","maxi"],
@@ -608,7 +607,7 @@
         id:"banana-coconut",
         name:"Coconut Bounty Banana Bread",
         desc:"Tropical Coconut and Chocoloate Delight.",
-        prices:{medium:7.5, maxi:9.5},
+        prices:{medium:14, maxi:21},
         img:"Coconut bounty banana bread.PNG",
         type:"bread",
         sizes:["medium","maxi"],
@@ -618,7 +617,7 @@
         id:"banana-nutty",
         name:"Nutty Banana Bread",
         desc:"Loaded with Crunchy Nuts.",
-        prices:{medium:7.0, maxi:9.0},
+        prices:{medium:15, maxi:22},
         img:"Nutty banana bread.PNG",
         type:"bread",
         sizes:["medium","maxi"],
@@ -628,7 +627,7 @@
         id:"banana-oats",
         name:"Oats Crumble Banana Bread",
         desc:"Hearty oats topping with a buttery crunch.",
-        prices:{medium:7.0, maxi:9.0},
+        prices:{medium:13, maxi:20},
         img:"Oats crumble banana bread.JPG",
         type:"bread",
         sizes:["medium","maxi"],
@@ -638,7 +637,7 @@
         id:"banana-oreo",
         name:"Oreo Banana Bread",
         desc:"Chunks of Oreo in every bite.",
-        prices:{medium:7.5, maxi:9.5},
+        prices:{medium:14, maxi:21},
         img:"Oreos Banana bread.JPG",
         type:"bread",
         sizes:["medium","maxi"],
@@ -646,11 +645,12 @@
       },
       {
         id:"choco-nuts",
-        name:"Chocolate Nut Bars",
+        name:"Chocolate Nuts Banana Bread",
         desc:"Decadent chocolate with crunchy nuts.",
-        price:5.5,
+        prices:{medium:15, maxi:22},
         img:"Choco Nuts.jpg",
-        type:"standalone",
+        type:"bread",
+        sizes:["medium","maxi"],
         priority:2
       },
       // BOTTOM SECTION - Mini, Meat Pie, Puff Puff
@@ -658,7 +658,7 @@
         id:"banana-mini",
         name:"Mini Banana Breads",
         desc:"Choose from all our delicious varieties.",
-        price:3.5,
+        price:2,
         img:"Banana bread mini 3.jpg",
         type:"minimum",
         minOrder:6,
@@ -668,7 +668,7 @@
         id:"meatpie-classic",
         name:"Traditional Meat Pie",
         desc:"Golden pastry with juicy beef filling.",
-        price:4.5,
+        price:3.5,
         img:"MEATPIE.PNG",
         type:"minimum",
         minOrder:10,
@@ -678,7 +678,7 @@
         id:"puff-puff",
         name:"Nigerian Puff Puff",
         desc:"Donut vibes, upgraded.",
-        price:3.5,
+        price:0.8,
         img:"Puff Puff.jpg",
         type:"minimum",
         minOrder:20,
@@ -816,7 +816,8 @@
           const varietyName = e.target.value;
           
           if (varietyName && productId === 'banana-mini') {
-            addMiniSelection(productId, varietyName, MINI_PRICE);
+            const price = varietyName === 'Classic Banana Bread' ? MINI_CLASSIC_PRICE : MINI_OTHER_PRICE;
+            addMiniSelection(productId, varietyName, price);
             dropdown.value = ''; // Reset dropdown
           }
         });
@@ -843,8 +844,13 @@
           const minQty = product?.minOrder || 0;
           tempQty = Math.max(minQty, tempQty-1);
           qtyEl.textContent = tempQty;
+          updatePriceDisplay(id, tempQty);
         });
-        plus.addEventListener('click',()=>{tempQty+=1;qtyEl.textContent=tempQty});
+        plus.addEventListener('click',()=>{
+          tempQty+=1;
+          qtyEl.textContent=tempQty;
+          updatePriceDisplay(id, tempQty);
+        });
         
         // Add button
         const addBtn = step.parentElement.parentElement.querySelector('.add');
@@ -934,6 +940,16 @@
         addBtn.disabled = true;
         addBtn.textContent = `Add to Cart (${6 - count} more needed)`;
         progressText.style.color = 'var(--burgundy)';
+      }
+    }
+
+    function updatePriceDisplay(productId, qty) {
+      const product = products.find(p => p.id === productId);
+      const priceEl = $(`.price[data-product="${productId}"]`);
+      
+      if (product && product.type === 'minimum' && priceEl) {
+        const totalPrice = product.price * qty;
+        priceEl.innerHTML = `${money(product.price)} each<br><small style="color: var(--bronze); font-weight: 600;">Total: ${money(totalPrice)}</small>`;
       }
     }
 
