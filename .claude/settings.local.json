@@ -5,7 +5,17 @@
       "Bash(del home_backup.html home_clean.html)",
       "Bash(rm:*)",
       "Bash(start home.html)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git checkout:*)",
+      "Bash(git push:*)",
+      "Bash(curl:*)",
+      "Bash(start http://localhost:3001/)",
+      "Bash(PORT=3001 npm start)",
+      "Bash(taskkill:*)",
+      "Bash(PORT=3002 npm start)",
+      "Bash(start http://localhost:3000)",
+      "Bash(npm start)",
+      "Bash(git reset:*)"
     ],
     "deny": [],
     "ask": []

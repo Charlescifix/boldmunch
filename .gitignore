@@ -52,4 +52,4 @@ Thumbs.db
 
 # Backup files
 *.backup
-*_backup.*
+*_backup.*node_modules/
