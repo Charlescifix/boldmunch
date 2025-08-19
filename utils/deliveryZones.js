@@ -1,5 +1,6 @@
 const axios = require('axios');
-const turf = require('@turf/turf');
+const { point, polygon } = require('@turf/helpers');
+const booleanPointInPolygon = require('@turf/boolean-point-in-polygon');
 const { query } = require('../config/database');
 
 // Hub coordinates for NN5 4YA (Upton) - updated to match actual postcode lookup
@@ -85,7 +86,7 @@ class DeliveryZoneManager {
   // Check if a point is within delivery area and calculate fee
   async calculateDeliveryFee(latitude, longitude) {
     try {
-      const point = turf.point([longitude, latitude]);
+      const pointGeom = point([longitude, latitude]);
       
       // Get delivery zones from database
       const zones = await query(`
@@ -95,9 +96,9 @@ class DeliveryZoneManager {
       `);
 
       for (const zone of zones.rows) {
-        const polygon = turf.polygon(zone.polygon.coordinates);
+        const polygonGeom = polygon(zone.polygon.coordinates);
         
-        if (turf.booleanPointInPolygon(point, polygon)) {
+        if (booleanPointInPolygon(pointGeom, polygonGeom)) {
           return {
             inDeliveryArea: true,
             deliveryFee: parseFloat(zone.delivery_fee),
@@ -154,10 +155,10 @@ class DeliveryZoneManager {
   // Check if address is in Upton estate for potential free delivery
   isInUptonEstate(latitude, longitude) {
     try {
-      const point = turf.point([longitude, latitude]);
-      const uptonPolygon = turf.polygon(this.getUptonEstatePolygon().coordinates);
+      const pointGeom = point([longitude, latitude]);
+      const uptonPolygon = polygon(this.getUptonEstatePolygon().coordinates);
       
-      return turf.booleanPointInPolygon(point, uptonPolygon);
+      return booleanPointInPolygon(pointGeom, uptonPolygon);
     } catch (error) {
       console.error('❌ Error checking Upton estate:', error);
       return false;
