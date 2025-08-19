@@ -1,7 +1,22 @@
 const axios = require('axios');
-const { point, polygon } = require('@turf/helpers');
-const booleanPointInPolygon = require('@turf/boolean-point-in-polygon');
 const { query } = require('../config/database');
+
+// Simple point-in-polygon function
+function isPointInPolygon(point, polygon) {
+  const [x, y] = point;
+  const coords = polygon[0]; // First ring (exterior)
+  
+  let inside = false;
+  for (let i = 0, j = coords.length - 1; i < coords.length; j = i++) {
+    const [xi, yi] = coords[i];
+    const [xj, yj] = coords[j];
+    
+    if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
 
 // Hub coordinates for NN5 4YA (Upton) - updated to match actual postcode lookup
 const HUB_COORDINATES = [-0.950749, 52.229993]; // [longitude, latitude]
@@ -86,7 +101,7 @@ class DeliveryZoneManager {
   // Check if a point is within delivery area and calculate fee
   async calculateDeliveryFee(latitude, longitude) {
     try {
-      const pointGeom = point([longitude, latitude]);
+      const pointCoords = [longitude, latitude];
       
       // Get delivery zones from database
       const zones = await query(`
@@ -96,9 +111,7 @@ class DeliveryZoneManager {
       `);
 
       for (const zone of zones.rows) {
-        const polygonGeom = polygon(zone.polygon.coordinates);
-        
-        if (booleanPointInPolygon(pointGeom, polygonGeom)) {
+        if (isPointInPolygon(pointCoords, zone.polygon.coordinates)) {
           return {
             inDeliveryArea: true,
             deliveryFee: parseFloat(zone.delivery_fee),
@@ -155,10 +168,10 @@ class DeliveryZoneManager {
   // Check if address is in Upton estate for potential free delivery
   isInUptonEstate(latitude, longitude) {
     try {
-      const pointGeom = point([longitude, latitude]);
-      const uptonPolygon = polygon(this.getUptonEstatePolygon().coordinates);
+      const pointCoords = [longitude, latitude];
+      const uptonPolygon = this.getUptonEstatePolygon().coordinates;
       
-      return booleanPointInPolygon(pointGeom, uptonPolygon);
+      return isPointInPolygon(pointCoords, uptonPolygon);
     } catch (error) {
       console.error('❌ Error checking Upton estate:', error);
       return false;
