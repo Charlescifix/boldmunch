@@ -15,7 +15,8 @@
       "Bash(PORT=3002 npm start)",
       "Bash(start http://localhost:3000)",
       "Bash(npm start)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

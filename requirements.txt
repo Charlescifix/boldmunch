@@ -1,2 +1,0 @@
-# No additional Python packages required
-# Using only Python standard library for simple HTTP server
