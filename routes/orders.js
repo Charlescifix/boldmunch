@@ -4,6 +4,7 @@ const Joi = require('joi');
 const { query } = require('../config/database');
 const postcodeService = require('../utils/postcodeService');
 const deliveryZones = require('../utils/deliveryZones');
+const { verifyToken } = require('./auth');
 
 // Validation schemas
 const orderItemSchema = Joi.object({
@@ -11,8 +12,8 @@ const orderItemSchema = Joi.object({
   name: Joi.string().required().max(255),
   quantity: Joi.number().integer().min(1).required(),
   price: Joi.number().min(0).required(),
-  size: Joi.string().optional(),
-  variety: Joi.string().optional()
+  size: Joi.string().allow(null, '').optional(),
+  variety: Joi.string().allow(null, '').optional()
 });
 
 const createOrderSchema = Joi.object({
@@ -143,7 +144,7 @@ router.post('/create', async (req, res) => {
 });
 
 // Get order by order number
-router.get('/:orderNumber', async (req, res) => {
+router.get('/:orderNumber', verifyToken, async (req, res) => {
   try {
     const { orderNumber } = req.params;
 
@@ -198,7 +199,7 @@ router.get('/:orderNumber', async (req, res) => {
 });
 
 // Update order status
-router.patch('/:orderNumber/status', async (req, res) => {
+router.patch('/:orderNumber/status', verifyToken, async (req, res) => {
   try {
     const { orderNumber } = req.params;
     const { status } = req.body;
@@ -275,39 +276,104 @@ router.patch('/:orderNumber/whatsapp-sent', async (req, res) => {
   }
 });
 
-// Get orders summary (admin endpoint)
-router.get('/admin/summary', async (req, res) => {
+// Get orders summary (admin endpoint) - Optimized
+router.get('/admin/summary', verifyToken, async (req, res) => {
   try {
-    const { limit = 50, offset = 0, status } = req.query;
+    const { 
+      limit = 50, 
+      offset = 0, 
+      status, 
+      zone,
+      dateFrom,
+      dateTo 
+    } = req.query;
 
-    let whereClause = '';
-    let params = [parseInt(limit), parseInt(offset)];
-    
+    // Validate and sanitize inputs
+    const limitInt = Math.min(parseInt(limit) || 50, 100); // Max 100 records
+    const offsetInt = Math.max(parseInt(offset) || 0, 0);
+
+    let whereConditions = [];
+    let params = [];
+    let paramCount = 0;
+
+    // Build dynamic WHERE clause
     if (status) {
-      whereClause = 'WHERE status = $3';
+      paramCount++;
+      whereConditions.push(`status = $${paramCount}`);
       params.push(status);
     }
 
-    const result = await query(`
+    if (zone) {
+      paramCount++;
+      whereConditions.push(`delivery_zone = $${paramCount}`);
+      params.push(zone);
+    }
+
+    if (dateFrom) {
+      paramCount++;
+      whereConditions.push(`created_at >= $${paramCount}`);
+      params.push(dateFrom);
+    }
+
+    if (dateTo) {
+      paramCount++;
+      whereConditions.push(`created_at <= $${paramCount}`);
+      params.push(dateTo);
+    }
+
+    const whereClause = whereConditions.length > 0 
+      ? `WHERE ${whereConditions.join(' AND ')}` 
+      : '';
+
+    // Add limit and offset parameters
+    params.push(limitInt, offsetInt);
+
+    // Optimized query with only necessary columns
+    const ordersQuery = `
       SELECT 
-        order_number, customer_name, postcode, status, 
-        total, delivery_zone, created_at, whatsapp_sent
+        order_number, 
+        customer_name, 
+        postcode, 
+        status, 
+        total::numeric(10,2) as total,
+        delivery_zone, 
+        created_at, 
+        whatsapp_sent
       FROM orders 
       ${whereClause}
       ORDER BY created_at DESC 
-      LIMIT $1 OFFSET $2
-    `, params);
+      LIMIT $${params.length - 1} OFFSET $${params.length}
+    `;
+
+    // Get total count for pagination (optimized with same WHERE clause)
+    const countQuery = `
+      SELECT COUNT(*) as total_count
+      FROM orders 
+      ${whereClause}
+    `;
+
+    // Execute both queries in parallel
+    const [ordersResult, countResult] = await Promise.all([
+      query(ordersQuery, params),
+      query(countQuery, params.slice(0, -2)) // Remove limit/offset for count
+    ]);
+
+    const totalCount = parseInt(countResult.rows[0].total_count);
 
     res.json({
       success: true,
-      orders: result.rows.map(order => ({
-        ...order,
-        total: parseFloat(order.total)
-      })),
+      orders: ordersResult.rows,
       pagination: {
-        limit: parseInt(limit),
-        offset: parseInt(offset),
-        total: result.rowCount
+        limit: limitInt,
+        offset: offsetInt,
+        total: totalCount,
+        pages: Math.ceil(totalCount / limitInt),
+        hasNext: offsetInt + limitInt < totalCount,
+        hasPrev: offsetInt > 0
+      },
+      summary: {
+        totalOrders: totalCount,
+        filters: { status, zone, dateFrom, dateTo }
       }
     });
 
@@ -316,6 +382,96 @@ router.get('/admin/summary', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Unable to fetch orders summary'
+    });
+  }
+});
+
+// Get order analytics (admin endpoint) - New optimized endpoint
+router.get('/admin/analytics', verifyToken, async (req, res) => {
+  try {
+    const { period = '7d' } = req.query;
+    
+    let dateCondition = '';
+    switch (period) {
+      case '24h':
+        dateCondition = "created_at >= NOW() - INTERVAL '24 hours'";
+        break;
+      case '7d':
+        dateCondition = "created_at >= NOW() - INTERVAL '7 days'";
+        break;
+      case '30d':
+        dateCondition = "created_at >= NOW() - INTERVAL '30 days'";
+        break;
+      default:
+        dateCondition = "created_at >= NOW() - INTERVAL '7 days'";
+    }
+
+    // Use optimized analytics query
+    const analyticsQuery = `
+      SELECT 
+        COUNT(*) as total_orders,
+        SUM(total) as total_revenue,
+        AVG(total) as avg_order_value,
+        COUNT(CASE WHEN status = 'pending' THEN 1 END) as pending_orders,
+        COUNT(CASE WHEN status = 'delivered' THEN 1 END) as delivered_orders,
+        COUNT(CASE WHEN whatsapp_sent = false THEN 1 END) as pending_notifications
+      FROM orders 
+      WHERE ${dateCondition}
+    `;
+
+    // Zone breakdown query
+    const zoneQuery = `
+      SELECT 
+        delivery_zone,
+        COUNT(*) as order_count,
+        SUM(total) as zone_revenue
+      FROM orders 
+      WHERE ${dateCondition}
+      GROUP BY delivery_zone
+      ORDER BY order_count DESC
+    `;
+
+    // Daily breakdown for charts
+    const dailyQuery = `
+      SELECT 
+        DATE(created_at) as order_date,
+        COUNT(*) as daily_orders,
+        SUM(total) as daily_revenue
+      FROM orders 
+      WHERE ${dateCondition}
+      GROUP BY DATE(created_at)
+      ORDER BY order_date DESC
+    `;
+
+    const [analyticsResult, zoneResult, dailyResult] = await Promise.all([
+      query(analyticsQuery),
+      query(zoneQuery),
+      query(dailyQuery)
+    ]);
+
+    res.json({
+      success: true,
+      period,
+      analytics: {
+        ...analyticsResult.rows[0],
+        total_revenue: parseFloat(analyticsResult.rows[0].total_revenue || 0),
+        avg_order_value: parseFloat(analyticsResult.rows[0].avg_order_value || 0)
+      },
+      zoneBreakdown: zoneResult.rows.map(row => ({
+        ...row,
+        zone_revenue: parseFloat(row.zone_revenue)
+      })),
+      dailyBreakdown: dailyResult.rows.map(row => ({
+        ...row,
+        daily_revenue: parseFloat(row.daily_revenue)
+      }))
+    });
+
+  } catch (error) {
+    console.error('❌ Analytics error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Unable to fetch analytics'
     });
   }
 });

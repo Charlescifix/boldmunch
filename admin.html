@@ -3,16 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bold Munch Admin Panel</title>
+  <title>Admin Panel — Bold Munch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #E67E22;
-      --primary-dark: #D35400;
-      --success: #27AE60;
-      --error: #E74C3C;
-      --warning: #F39C12;
-      --dark: #2C3E50;
-      --light: #ECF0F1;
+      --cream: #FFF9F3;
+      --gold: #F1C40F;
+      --bronze: #8B4513;
+      --burgundy: #E67E22;
+      --sage: #27AE60;
+      --charcoal: #1A1A1A;
+      --glass: rgba(255,255,255,0.8);
+      --glass-dark: rgba(255,255,255,0.6);
+      --radius-lg: 24px;
+      --radius-sm: 16px;
+      --shadow: 0 12px 40px rgba(0,0,0,.15);
+      --shadow-soft: 0 8px 24px rgba(0,0,0,.1);
+      --error: #e74c3c;
+      --success: #27ae60;
+      --warning: #f39c12;
     }
 
     * { box-sizing: border-box; }
@@ -20,221 +31,717 @@
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      background: linear-gradient(180deg, var(--cream), #ffffff);
+      font-family: Inter, system-ui, sans-serif;
+      color: var(--charcoal);
       min-height: 100vh;
     }
 
     .container {
-      max-width: 400px;
-      margin: 50px auto;
+      max-width: 1200px;
+      margin: 0 auto;
       padding: 20px;
     }
 
-    .login-card, .admin-panel {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      padding: 40px;
-      text-align: center;
+    /* Header */
+    .header {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 16px;
     }
 
     .logo {
-      font-size: 24px;
-      font-weight: bold;
-      color: var(--primary);
-      margin-bottom: 30px;
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      object-fit: contain;
+      box-shadow: 0 12px 30px rgba(211,84,0,0.5);
+      border: 3px solid rgba(255,255,255,0.5);
     }
 
-    .form-group {
-      margin-bottom: 20px;
-      text-align: left;
+    .brand-text h1 {
+      margin: 0;
+      font-family: Poppins, sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: 1px;
     }
 
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: var(--dark);
-    }
-
-    input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #E0E6ED;
-      border-radius: 8px;
+    .brand-text p {
+      margin: 4px 0 0;
       font-size: 14px;
-      transition: border-color 0.3s ease;
-    }
-
-    input:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-
-    .btn {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white;
-      border: none;
-      padding: 14px 24px;
-      border-radius: 8px;
-      font-size: 16px;
+      color: var(--bronze);
       font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.2s ease;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-badge {
+      background: linear-gradient(145deg, var(--gold), #e6b800);
+      color: var(--charcoal);
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Login Form */
+    .login-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .login-form {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+      border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: var(--shadow);
       width: 100%;
+      max-width: 400px;
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
+    .login-header {
+      text-align: center;
+      margin-bottom: 32px;
     }
 
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
+    .login-header h2 {
+      margin: 0 0 8px;
+      font-family: Poppins, sans-serif;
+      font-size: 24px;
+      font-weight: 700;
     }
 
-    .notification {
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      font-weight: 500;
+    .login-header p {
+      margin: 0;
+      color: var(--bronze);
+      font-size: 14px;
     }
 
-    .notification.success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-    }
-
-    .notification.error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-
-    .admin-panel {
+    /* Dashboard Layout */
+    .dashboard {
       display: none;
     }
 
-    .admin-panel.show {
+    .dashboard.active {
       display: block;
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 20px;
-      margin: 30px 0;
+      margin-bottom: 32px;
     }
 
     .stat-card {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white;
-      padding: 20px;
-      border-radius: 8px;
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-sm);
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: var(--shadow-soft);
       text-align: center;
     }
 
-    .stat-number {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 5px;
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      font-family: Poppins, sans-serif;
+      margin-bottom: 8px;
     }
 
     .stat-label {
-      font-size: 12px;
-      opacity: 0.9;
+      font-size: 14px;
+      color: var(--bronze);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .logout-btn {
-      background: var(--error);
-      margin-top: 20px;
+    .stat-card.pending .stat-value { color: var(--warning); }
+    .stat-card.confirmed .stat-value { color: var(--success); }
+    .stat-card.revenue .stat-value { color: var(--burgundy); }
+    .stat-card.delivery .stat-value { color: var(--sage); }
+
+    /* Orders Section */
+    .section {
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: var(--shadow-soft);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .section-title {
+      font-family: Poppins, sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .filters {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-select, .refresh-btn {
+      padding: 8px 16px;
+      border: 2px solid rgba(241,196,15,0.3);
+      border-radius: 12px;
+      background: linear-gradient(145deg, #FFFFFF, #F8F9FA);
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--charcoal);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-select:focus, .refresh-btn:hover {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(241,196,15,0.2);
+    }
+
+    /* Orders Table */
+    .orders-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: rgba(255,255,255,0.5);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .orders-table th,
+    .orders-table td {
+      padding: 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(241,196,15,0.2);
+    }
+
+    .orders-table th {
+      background: linear-gradient(145deg, var(--gold), #e6b800);
+      color: var(--charcoal);
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .orders-table tr:hover {
+      background: rgba(241,196,15,0.1);
+    }
+
+    .order-number {
+      font-weight: 700;
+      color: var(--burgundy);
+      font-family: monospace;
+    }
+
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-confirmed { background: #d4edda; color: #155724; }
+    .status-preparing { background: #d1ecf1; color: #0c5460; }
+    .status-ready { background: #cce5ff; color: #004085; }
+    .status-delivered { background: #d4edda; color: #155724; }
+    .status-cancelled { background: #f8d7da; color: #721c24; }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--charcoal);
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid rgba(241,196,15,0.3);
+      border-radius: 12px;
+      background: linear-gradient(145deg, #FFFFFF, #F8F9FA);
+      font-size: 16px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(241,196,15,0.2);
+    }
+
+    .form-input.error {
+      border-color: var(--error);
+      box-shadow: 0 0 0 3px rgba(231,76,60,0.2);
+    }
+
+    .btn {
+      background: linear-gradient(145deg, var(--burgundy), #D35400);
+      color: white;
+      font-weight: 800;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(230,126,34,0.4);
+    }
+
+    .btn:disabled {
+      background: linear-gradient(145deg, #ccc, #999);
+      cursor: not-allowed;
+      transform: none;
+      opacity: 0.6;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--charcoal);
+      border: 2px solid var(--gold);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gold);
+      color: var(--charcoal);
+    }
+
+    .btn-small {
+      padding: 8px 16px;
+      font-size: 12px;
+      border-radius: 16px;
+    }
+
+    /* Loading States */
+    .loading {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+
+    .spinner {
+      border: 3px solid rgba(241,196,15,0.3);
+      border-top: 3px solid var(--gold);
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-right: 8px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Notifications */
+    .notification {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      border: 2px solid var(--gold);
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow);
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.4s ease;
+      max-width: 350px;
+    }
+
+    .notification.show {
+      transform: translateX(0);
+    }
+
+    .notification.error {
+      border-color: var(--error);
+      background: linear-gradient(145deg, #ffeaea, #ffe0e0);
+    }
+
+    .notification.success {
+      border-color: var(--success);
+      background: linear-gradient(145deg, #eafff0, #e0ffe8);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .container {
+        padding: 16px;
+      }
+
+      .header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .orders-table {
+        font-size: 14px;
+      }
+
+      .orders-table th,
+      .orders-table td {
+        padding: 12px 8px;
+      }
+
+      .section-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filters {
+        justify-content: center;
+      }
     }
 
     .hidden { display: none; }
+
+    /* Order Details Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: var(--radius-lg);
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--gold);
+    }
+
+    .modal-title {
+      font-family: Poppins, sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .close-btn {
+      background: var(--error);
+      color: white;
+      border: none;
+      width: 30px;
+      height: 30px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: all 0.3s ease;
+    }
+
+    .close-btn:hover {
+      background: #c0392b;
+      transform: scale(1.1);
+    }
+
+    .order-details {
+      margin-bottom: 20px;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(241,196,15,0.2);
+    }
+
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: var(--bronze);
+    }
+
+    .detail-value {
+      color: var(--charcoal);
+      text-align: right;
+    }
+
+    .items-list {
+      margin: 16px 0;
+    }
+
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(241,196,15,0.1);
+    }
+
+    .item-details {
+      flex: 1;
+    }
+
+    .item-name {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .item-meta {
+      font-size: 13px;
+      color: var(--bronze);
+    }
+
+    .item-price {
+      font-weight: 700;
+      color: var(--burgundy);
+    }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Login Form -->
-    <div id="loginForm" class="login-card">
-      <div class="logo">🍞 Bold Munch Admin</div>
-      
-      <div id="notification" class="notification hidden"></div>
-      
-      <form id="authForm">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" name="username" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" required>
-        </div>
-        
-        <button type="submit" class="btn" id="loginBtn">
-          Sign In
-        </button>
-      </form>
-    </div>
-
-    <!-- Admin Panel -->
-    <div id="adminPanel" class="admin-panel">
-      <div class="logo">🍞 Admin Dashboard</div>
-      
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-number" id="ordersToday">-</div>
-          <div class="stat-label">Orders Today</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-number" id="totalRevenue">-</div>
-          <div class="stat-label">Revenue</div>
-        </div>
+  <!-- Login Form -->
+  <div id="loginContainer" class="login-container">
+    <form id="loginForm" class="login-form">
+      <div class="login-header">
+        <img src="new_logo.png" alt="Bold Munch Logo" style="width: 80px; height: 80px; border-radius: 20px; object-fit: contain; margin-bottom: 16px; box-shadow: 0 8px 24px rgba(211,84,0,0.4);">
+        <h2>Admin Login</h2>
+        <p>Bold Munch Administration Panel</p>
       </div>
 
-      <div style="text-align: left; margin: 20px 0;">
-        <h3>Quick Actions</h3>
-        <button class="btn" style="margin: 5px 0;" onclick="viewOrders()">
-          📋 View All Orders
-        </button>
-        <button class="btn" style="margin: 5px 0;" onclick="manageDelivery()">
-          🚚 Manage Delivery
-        </button>
+      <div class="form-group">
+        <label for="username" class="form-label">Username</label>
+        <input type="text" id="username" name="username" class="form-input" required>
       </div>
 
-      <button class="btn logout-btn" onclick="logout()">
-        🔓 Logout
+      <div class="form-group">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" id="password" name="password" class="form-input" required>
+      </div>
+
+      <button type="submit" class="btn" id="loginBtn">
+        <span id="loginText">Sign In</span>
       </button>
+    </form>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div id="dashboard" class="dashboard">
+    <div class="container">
+      <!-- Header -->
+      <div class="header">
+        <div class="brand">
+          <img src="new_logo.png" alt="Bold Munch Logo" class="logo">
+          <div class="brand-text">
+            <h1>BOLD MUNCH</h1>
+            <p>Admin Dashboard</p>
+          </div>
+        </div>
+        <div class="user-info">
+          <div class="user-badge">
+            👤 <span id="currentUser">Admin</span>
+          </div>
+          <button class="btn btn-secondary btn-small" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <!-- Stats Overview -->
+      <div class="stats-grid">
+        <div class="stat-card pending">
+          <div class="stat-value" id="pendingCount">-</div>
+          <div class="stat-label">Pending Orders</div>
+        </div>
+        <div class="stat-card confirmed">
+          <div class="stat-value" id="confirmedCount">-</div>
+          <div class="stat-label">Active Orders</div>
+        </div>
+        <div class="stat-card revenue">
+          <div class="stat-value" id="todayRevenue">£-</div>
+          <div class="stat-label">Today's Revenue</div>
+        </div>
+        <div class="stat-card delivery">
+          <div class="stat-value" id="deliveryCount">-</div>
+          <div class="stat-label">Ready for Delivery</div>
+        </div>
+      </div>
+
+      <!-- Orders Management -->
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">📋 Order Management</h2>
+          <div class="filters">
+            <select id="statusFilter" class="filter-select">
+              <option value="">All Orders</option>
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="preparing">Preparing</option>
+              <option value="ready">Ready</option>
+              <option value="delivered">Delivered</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+            <button class="refresh-btn" onclick="loadOrders()">🔄 Refresh</button>
+          </div>
+        </div>
+
+        <div id="ordersTableContainer">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Order #</th>
+                <th>Customer</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <tr>
+                <td colspan="7" style="text-align: center; padding: 40px;">
+                  <div class="spinner"></div>
+                  Loading orders...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- Order Details Modal -->
+  <div id="orderModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Order Details</h3>
+        <button class="close-btn" onclick="closeOrderModal()">×</button>
+      </div>
+      <div id="modalBody">
+        <!-- Order details will be populated here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Container -->
+  <div id="notificationContainer"></div>
+
   <script>
+    // Global state
     let authToken = localStorage.getItem('adminToken');
+    let orders = [];
 
-    // Check if already logged in
-    if (authToken) {
-      verifyToken();
-    }
-
-    // Form submission
-    document.getElementById('authForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Ensure modal is hidden on load
+      const modal = document.getElementById('orderModal');
+      modal.classList.remove('show');
+      modal.classList.add('hidden');
       
+      if (authToken) {
+        verifyToken();
+      } else {
+        showLogin();
+      }
+    });
+
+    // Authentication functions
+    async function login(event) {
+      event.preventDefault();
+      
+      const loginBtn = document.getElementById('loginBtn');
+      const loginText = document.getElementById('loginText');
       const username = document.getElementById('username').value.trim();
       const password = document.getElementById('password').value;
-      const loginBtn = document.getElementById('loginBtn');
-      
+
       if (!username || !password) {
         showNotification('Please enter both username and password', 'error');
         return;
       }
 
+      // Show loading state
       loginBtn.disabled = true;
-      loginBtn.textContent = 'Signing In...';
+      loginText.innerHTML = '<span class="spinner"></span>Signing In...';
 
       try {
         const response = await fetch('/api/auth/login', {
@@ -248,25 +755,25 @@
         const data = await response.json();
 
         if (data.success) {
-          localStorage.setItem('adminToken', data.token);
           authToken = data.token;
-          showAdminPanel();
+          localStorage.setItem('adminToken', authToken);
+          showDashboard();
           showNotification('Login successful!', 'success');
         } else {
-          showNotification(data.error || 'Login failed', 'error');
+          throw new Error(data.error || 'Login failed');
         }
       } catch (error) {
-        showNotification('Connection error. Please try again.', 'error');
         console.error('Login error:', error);
+        showNotification(error.message || 'Login failed. Please try again.', 'error');
+      } finally {
+        loginBtn.disabled = false;
+        loginText.textContent = 'Sign In';
       }
-
-      loginBtn.disabled = false;
-      loginBtn.textContent = 'Sign In';
-    });
+    }
 
     async function verifyToken() {
       if (!authToken) {
-        showLoginForm();
+        showLogin();
         return;
       }
 
@@ -274,75 +781,359 @@
         const response = await fetch('/api/auth/verify', {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${authToken}`
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
           }
         });
 
         const data = await response.json();
 
         if (data.success && data.valid) {
-          showAdminPanel();
+          document.getElementById('currentUser').textContent = data.user.username;
+          showDashboard();
         } else {
-          localStorage.removeItem('adminToken');
-          authToken = null;
-          showLoginForm();
+          throw new Error('Invalid token');
         }
       } catch (error) {
-        localStorage.removeItem('adminToken');
-        authToken = null;
-        showLoginForm();
+        console.error('Token verification failed:', error);
+        logout();
       }
-    }
-
-    function showLoginForm() {
-      document.getElementById('loginForm').style.display = 'block';
-      document.getElementById('adminPanel').classList.remove('show');
-    }
-
-    function showAdminPanel() {
-      document.getElementById('loginForm').style.display = 'none';
-      document.getElementById('adminPanel').classList.add('show');
-      loadDashboardData();
-    }
-
-    async function loadDashboardData() {
-      // Simulate loading dashboard data
-      document.getElementById('ordersToday').textContent = '12';
-      document.getElementById('totalRevenue').textContent = '£245';
-    }
-
-    function showNotification(message, type) {
-      const notification = document.getElementById('notification');
-      notification.textContent = message;
-      notification.className = `notification ${type}`;
-      notification.classList.remove('hidden');
-      
-      setTimeout(() => {
-        notification.classList.add('hidden');
-      }, 5000);
     }
 
     function logout() {
-      localStorage.removeItem('adminToken');
       authToken = null;
-      showLoginForm();
+      localStorage.removeItem('adminToken');
+      showLogin();
       showNotification('Logged out successfully', 'success');
     }
 
-    function viewOrders() {
-      alert('Orders management - To be implemented');
+    function showLogin() {
+      document.getElementById('loginContainer').style.display = 'flex';
+      document.getElementById('dashboard').classList.remove('active');
     }
 
-    function manageDelivery() {
-      alert('Delivery management - To be implemented');
+    function showDashboard() {
+      document.getElementById('loginContainer').style.display = 'none';
+      document.getElementById('dashboard').classList.add('active');
+      loadDashboardData();
     }
 
-    // Auto-logout on token expiration
-    setInterval(() => {
-      if (authToken) {
-        verifyToken();
+    // Dashboard functions
+    async function loadDashboardData() {
+      await Promise.all([
+        loadStats(),
+        loadOrders()
+      ]);
+    }
+
+    async function loadStats() {
+      // For now, we'll calculate stats from orders
+      // In a real app, you'd have dedicated endpoints
+      try {
+        const orders = await fetchOrders();
+        
+        const today = new Date().toDateString();
+        const todayOrders = orders.filter(order => 
+          new Date(order.created_at).toDateString() === today
+        );
+
+        const pending = orders.filter(o => o.status === 'pending').length;
+        const active = orders.filter(o => ['confirmed', 'preparing'].includes(o.status)).length;
+        const ready = orders.filter(o => o.status === 'ready').length;
+        const todayRevenue = todayOrders.reduce((sum, order) => sum + parseFloat(order.total || 0), 0);
+
+        document.getElementById('pendingCount').textContent = pending;
+        document.getElementById('confirmedCount').textContent = active;
+        document.getElementById('deliveryCount').textContent = ready;
+        document.getElementById('todayRevenue').textContent = `£${todayRevenue.toFixed(2)}`;
+      } catch (error) {
+        console.error('Error loading stats:', error);
       }
-    }, 5 * 60 * 1000); // Check every 5 minutes
+    }
+
+    async function loadOrders() {
+      const statusFilter = document.getElementById('statusFilter').value;
+      
+      try {
+        orders = await fetchOrders(statusFilter);
+        renderOrdersTable(orders);
+      } catch (error) {
+        console.error('Error loading orders:', error);
+        showNotification('Error loading orders', 'error');
+      }
+    }
+
+    async function fetchOrders(status = '') {
+      const url = `/api/orders/admin/summary?limit=100${status ? `&status=${status}` : ''}`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${authToken}`
+        }
+      });
+
+      const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Failed to fetch orders');
+      }
+
+      return data.orders;
+    }
+
+    function renderOrdersTable(ordersList) {
+      const tbody = document.getElementById('ordersTableBody');
+      
+      if (!ordersList.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 40px; color: var(--bronze);">
+              No orders found
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = ordersList.map(order => `
+        <tr>
+          <td>
+            <span class="order-number">${order.order_number}</span>
+          </td>
+          <td>
+            <div style="font-weight: 600;">${order.customer_name}</div>
+            <div style="font-size: 12px; color: var(--bronze);">${order.postcode}</div>
+          </td>
+          <td style="font-size: 13px;">
+            ${order.whatsapp_sent ? '✅' : '❌'} WhatsApp
+          </td>
+          <td style="font-weight: 700; color: var(--burgundy);">
+            £${parseFloat(order.total).toFixed(2)}
+          </td>
+          <td>
+            <span class="status-badge status-${order.status}">
+              ${order.status}
+            </span>
+          </td>
+          <td style="font-size: 13px;">
+            ${formatDate(order.created_at)}
+          </td>
+          <td>
+            <button class="btn btn-small" onclick="viewOrder('${order.order_number}')">
+              View
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    async function viewOrder(orderNumber) {
+      try {
+        const response = await fetch(`/api/orders/${orderNumber}`, {
+          headers: {
+            'Authorization': `Bearer ${authToken}`
+          }
+        });
+
+        const data = await response.json();
+        
+        if (!data.success) {
+          throw new Error(data.error || 'Failed to fetch order details');
+        }
+
+        showOrderModal(data.order);
+      } catch (error) {
+        console.error('Error fetching order:', error);
+        showNotification('Error fetching order details', 'error');
+      }
+    }
+
+    function showOrderModal(order) {
+      const modal = document.getElementById('orderModal');
+      const title = document.getElementById('modalTitle');
+      const body = document.getElementById('modalBody');
+
+      title.textContent = `Order ${order.orderNumber}`;
+
+      const items = Array.isArray(order.items) ? order.items : JSON.parse(order.items || '[]');
+      
+      body.innerHTML = `
+        <div style="margin-bottom: 20px;">
+          <div class="detail-row">
+            <span class="detail-label">Customer:</span>
+            <span class="detail-value">${order.customerName}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Email:</span>
+            <span class="detail-value">${order.customerEmail}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Phone:</span>
+            <span class="detail-value">${order.customerPhone}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Address:</span>
+            <span class="detail-value">${order.deliveryAddress}, ${order.postcode}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Delivery Zone:</span>
+            <span class="detail-value">${order.deliveryZone}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Status:</span>
+            <span class="detail-value">
+              <span class="status-badge status-${order.status}">${order.status}</span>
+            </span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">WhatsApp Sent:</span>
+            <span class="detail-value">${order.whatsappSent ? '✅ Yes' : '❌ No'}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Created:</span>
+            <span class="detail-value">${formatDate(order.createdAt)}</span>
+          </div>
+        </div>
+
+        <h4 style="margin: 20px 0 12px; font-family: Poppins, sans-serif;">📦 Order Items</h4>
+        <div class="items-list">
+          ${items.map(item => `
+            <div class="item-row">
+              <div class="item-details">
+                <div class="item-name">${item.name}</div>
+                <div class="item-meta">
+                  Qty: ${item.quantity}${item.size ? ` • Size: ${item.size}` : ''}${item.variety ? ` • ${item.variety}` : ''}
+                </div>
+              </div>
+              <div class="item-price">£${(item.price * item.quantity).toFixed(2)}</div>
+            </div>
+          `).join('')}
+        </div>
+
+        <div style="margin-top: 20px; padding-top: 16px; border-top: 2px solid var(--gold);">
+          <div class="detail-row">
+            <span class="detail-label">Subtotal:</span>
+            <span class="detail-value">£${parseFloat(order.subtotal).toFixed(2)}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Delivery Fee:</span>
+            <span class="detail-value">£${parseFloat(order.deliveryFee).toFixed(2)}</span>
+          </div>
+          <div class="detail-row" style="font-weight: 700; font-size: 16px; color: var(--burgundy);">
+            <span class="detail-label">Total:</span>
+            <span class="detail-value">£${parseFloat(order.total).toFixed(2)}</span>
+          </div>
+        </div>
+
+        <div style="margin-top: 24px; display: flex; gap: 12px; justify-content: center;">
+          <select id="statusUpdate" class="filter-select" style="flex: 1;">
+            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Pending</option>
+            <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirmed</option>
+            <option value="preparing" ${order.status === 'preparing' ? 'selected' : ''}>Preparing</option>
+            <option value="ready" ${order.status === 'ready' ? 'selected' : ''}>Ready</option>
+            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
+            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
+          </select>
+          <button class="btn btn-small" onclick="updateOrderStatus('${order.orderNumber}')">
+            Update Status
+          </button>
+        </div>
+      `;
+
+      modal.classList.remove('hidden');
+      modal.classList.add('show');
+    }
+
+    async function updateOrderStatus(orderNumber) {
+      const newStatus = document.getElementById('statusUpdate').value;
+      
+      try {
+        const response = await fetch(`/api/orders/${orderNumber}/status`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ status: newStatus })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+          showNotification(`Order status updated to ${newStatus}`, 'success');
+          closeOrderModal();
+          loadOrders(); // Refresh the orders table
+          loadStats(); // Refresh stats
+        } else {
+          throw new Error(data.error || 'Failed to update order status');
+        }
+      } catch (error) {
+        console.error('Error updating order status:', error);
+        showNotification('Error updating order status', 'error');
+      }
+    }
+
+    function closeOrderModal() {
+      const modal = document.getElementById('orderModal');
+      modal.classList.remove('show');
+      modal.classList.add('hidden');
+    }
+
+    // Utility functions
+    function formatDate(dateString) {
+      const date = new Date(dateString);
+      return date.toLocaleString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function showNotification(message, type = 'info', duration = 5000) {
+      const container = document.getElementById('notificationContainer');
+      
+      const notification = document.createElement('div');
+      notification.className = `notification ${type}`;
+      notification.innerHTML = `
+        <div style="font-weight: 600; color: var(--charcoal);">${message}</div>
+      `;
+
+      container.appendChild(notification);
+
+      // Show notification
+      setTimeout(() => notification.classList.add('show'), 100);
+
+      // Auto-remove
+      setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.parentNode.removeChild(notification);
+          }
+        }, 400);
+      }, duration);
+    }
+
+    // Event listeners
+    document.getElementById('loginForm').addEventListener('submit', login);
+    document.getElementById('statusFilter').addEventListener('change', loadOrders);
+
+    // Close modal when clicking outside
+    document.getElementById('orderModal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('orderModal')) {
+        closeOrderModal();
+      }
+    });
+
+    // Auto-refresh orders every 30 seconds
+    setInterval(() => {
+      if (document.getElementById('dashboard').classList.contains('active')) {
+        loadOrders();
+        loadStats();
+      }
+    }, 30000);
   </script>
 </body>
 </html>

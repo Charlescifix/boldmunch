@@ -68,6 +68,12 @@
       box-shadow:var(--shadow-soft);
     }
     
+    /* Darker background for order total section */
+    .form-section.order-total{
+      background:rgba(255,255,255,0.3);
+      border:1px solid rgba(255,255,255,.4);
+    }
+    
     .section-title{
       font-family:Poppins,sans-serif;
       font-size:20px;
@@ -342,7 +348,7 @@
       </div>
 
       <!-- Order Total -->
-      <div class="form-section">
+      <div class="form-section order-total">
         <h2 class="section-title">💰 Order Total</h2>
         <div id="orderTotal">
           <!-- Total breakdown will be shown here -->
@@ -474,6 +480,8 @@
       postcodeInput.classList.add('loading');
       
       try {
+        console.log('Validating postcode:', postcode);
+        
         const response = await fetch('/api/delivery/validate-postcode', {
           method: 'POST',
           headers: {
@@ -482,7 +490,9 @@
           body: JSON.stringify({ postcode })
         });
         
+        console.log('Postcode response status:', response.status);
         const data = await response.json();
+        console.log('Postcode response data:', data);
         
         if (data.success) {
           deliveryFee = data.delivery.deliveryFee;
@@ -550,6 +560,14 @@
                      deliveryValidated && 
                      orderData.items.length > 0;
       
+      // Debug logging
+      console.log('Form validation check:', {
+        formFields: Object.fromEntries(formData.entries()),
+        deliveryValidated,
+        hasItems: orderData.items.length > 0,
+        isValid
+      });
+      
       submitBtn.disabled = !isValid;
     }
     
@@ -587,6 +605,8 @@
           subtotal: orderData.subtotal
         };
         
+        console.log('Submitting order payload:', orderPayload);
+        
         const response = await fetch('/api/orders/create', {
           method: 'POST',
           headers: {
@@ -595,7 +615,9 @@
           body: JSON.stringify(orderPayload)
         });
         
+        console.log('Order response status:', response.status);
         const data = await response.json();
+        console.log('Order response data:', data);
         
         if (data.success) {
           // Generate WhatsApp message
@@ -625,7 +647,20 @@
         
       } catch (error) {
         console.error('Order submission error:', error);
-        alert('There was an error creating your order. Please try again.');
+        
+        // Show more specific error message
+        let errorMessage = 'There was an error creating your order. Please try again.';
+        if (error.message.includes('WhatsApp')) {
+          errorMessage = 'Order created successfully, but there was an issue opening WhatsApp. Please contact us directly.';
+        } else if (error.message.includes('postcode')) {
+          errorMessage = 'There was an issue with your postcode. Please check and try again.';
+        } else if (error.message.includes('delivery')) {
+          errorMessage = 'There was an issue with delivery validation. Please check your address.';
+        } else if (error.message && error.message !== 'Failed to create order') {
+          errorMessage = `Error: ${error.message}`;
+        }
+        
+        alert(errorMessage);
         
         submitBtn.disabled = false;
         submitText.textContent = 'Complete Order';
