@@ -57,6 +57,12 @@ router.post('/generate-message', async (req, res) => {
       return itemText;
     }).join('\n');
 
+    // Format delivery fee message
+    const deliveryFee = parseFloat(order.delivery_fee);
+    const deliveryFeeText = deliveryFee === 0 ? 
+      '🎉 Delivery Fee: FREE DELIVERY!' : 
+      `🚚 Delivery Fee: £${deliveryFee.toFixed(2)}`;
+
     // Generate WhatsApp message
     const message = `Hi Bold Munch! 🍞
 
@@ -65,7 +71,7 @@ I'd like to place this order:
 ${itemsList}
 
 📍 Delivery Address: ${order.delivery_address}, ${order.postcode}
-🚚 Delivery Fee: £${parseFloat(order.delivery_fee).toFixed(2)}
+${deliveryFeeText}
 💰 Order Total: £${parseFloat(order.total).toFixed(2)}
 
 Order Number: ${order.order_number}
