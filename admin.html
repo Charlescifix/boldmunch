@@ -371,6 +371,18 @@
       border-radius: 16px;
     }
 
+    .btn-whatsapp {
+      background: #25D366 !important;
+      color: white;
+      transition: all 0.3s ease;
+    }
+
+    .btn-whatsapp:hover {
+      background: #1eb757 !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    }
+
     /* Loading States */
     .loading {
       opacity: 0.6;
@@ -957,6 +969,10 @@
             <button class="btn btn-small" onclick="viewOrder('${order.order_number}')">
               View
             </button>
+            <button class="btn btn-small btn-whatsapp" onclick="sendWhatsAppConfirmation('${order.order_number}')" 
+                    style="margin-left: 8px;" title="Send WhatsApp Confirmation">
+              📱 Confirm
+            </button>
           </td>
         </tr>
       `).join('');
@@ -1161,6 +1177,72 @@
         closeOrderModal();
       }
     });
+
+    // WhatsApp Confirmation Function
+    async function sendWhatsAppConfirmation(orderNumber) {
+      try {
+        // Find the order details
+        const order = orders.find(o => o.order_number === orderNumber);
+        if (!order) {
+          showNotification('Order not found', 'error');
+          return;
+        }
+
+        // Parse customer name to get first name
+        const firstName = order.customer_name.split(' ')[0];
+        
+        // Parse order items
+        const items = JSON.parse(order.items);
+        const itemsList = items.map(item => 
+          `- ${item.quantity || item.qty || 1}x ${item.name}${item.size ? ` (${item.size})` : ''}${item.variety ? ` - ${item.variety}` : ''}`
+        ).join('\n');
+
+        // Format the confirmation message
+        const message = `Hi ${firstName}! Your Bold Munch order is confirmed 🎉
+
+📦 Order #${orderNumber}
+${itemsList}
+
+📊 Order Total: £${parseFloat(order.total).toFixed(2)}
+🚚 Delivery: Saturday  
+🏠 Address: ${order.delivery_address}, ${order.postcode}
+
+💳 Bank Transfer Details:
+Account: Bold Munch Ltd
+Sort Code: 12-34-56
+Account No: 12345678
+Ref: ${orderNumber}
+
+Please reply "PAID" after transfer.
+
+Thank you! 🍞✨`;
+
+        // Format phone number for WhatsApp (remove any non-digits and ensure it starts with country code)
+        let phone = order.customer_phone.replace(/\D/g, '');
+        
+        // If phone starts with 0, replace with 44 (UK)
+        if (phone.startsWith('0')) {
+          phone = '44' + phone.substring(1);
+        }
+        // If phone doesn't start with country code, assume UK
+        else if (!phone.startsWith('44')) {
+          phone = '44' + phone;
+        }
+
+        // Create WhatsApp URL with pre-filled message
+        const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+        
+        // Open WhatsApp (works on both mobile and desktop)
+        window.open(whatsappUrl, '_blank');
+        
+        // Show success notification
+        showNotification(`WhatsApp confirmation opened for ${firstName}`, 'success');
+        
+      } catch (error) {
+        console.error('Error sending WhatsApp confirmation:', error);
+        showNotification('Error opening WhatsApp confirmation', 'error');
+      }
+    }
 
     // Auto-refresh orders every 30 seconds
     setInterval(() => {
