@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — Bold Munch</title>
+  <meta name="description" content="Bold Munch — your go-to bakery platform for premium handmade banana breads, cookies, meat pies, and Nigerian puff puff. Natural ingredients, artisanal craft, Saturday delivery."/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --cream:#FFF9F3;
+      --gold:#F1C40F;
+      --bronze:#8B4513;
+      --burgundy:#E67E22;
+      --sage:#27AE60;
+      --charcoal:#1A1A1A;
+      --mint:#B5EAEA; /* new: for delivery pill */
+      --ink:#2A2A2A;
+      --glass: rgba(255,255,255,0.8);
+      --glass-dark: rgba(255,255,255,0.6);
+      --radius-lg: 24px;
+      --radius-sm: 16px;
+      --shadow: 0 12px 40px rgba(0,0,0,.15);
+      --shadow-soft: 0 8px 24px rgba(0,0,0,.1);
+      --shadow-luxury: 0 16px 50px rgba(230,126,34,.2);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:linear-gradient(180deg,var(--cream),#ffffff);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--charcoal);line-height:1.6}
+    .container{max-width:960px;margin:0 auto;padding:20px}
+    /* Header */
+    .header{
+      text-align:center;margin-bottom:32px;padding:26px 18px;background:var(--glass);
+      border-radius:var(--radius-lg);border:1px solid rgba(255,255,255,.65);box-shadow:var(--shadow-soft);position:relative;overflow:hidden
+    }
+    .logo-link{display:inline-block;text-decoration:none;transition:transform .3s ease}
+    .logo-link:hover{transform:scale(1.04)}
+    .logo{width:100px;height:100px;border-radius:25px;object-fit:contain;margin:0 auto 12px;box-shadow:0 15px 50px rgba(211,84,0,0.5), var(--shadow);border:4px solid rgba(255,255,255,0.7)}
+    .brand-name{font-family:Poppins,sans-serif;font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:2px;margin-bottom:6px;background:linear-gradient(145deg,var(--burgundy),var(--bronze));background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .tagline{font-size:15px;color:var(--bronze);font-weight:600;margin-bottom:14px}
+    /* Delivery pill */
+    .delivery-pill{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--mint),#e7fbfb);color:#0d3b3b;padding:10px 14px;border-radius:999px;font-weight:800;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow-soft)}
+    .arrow-bounce{display:inline-block;animation:arrow 1.2s infinite ease-in-out}
+    @keyframes arrow{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
+    /* Back Button */
+    .btn{background:linear-gradient(145deg,var(--sage),#1E8449);color:#fff;font-weight:700;padding:12px 20px;border-radius:50px;border:none;cursor:pointer;transition:all .3s ease;text-decoration:none;display:inline-flex;align-items:center;gap:8px;font-size:14px;letter-spacing:.4px}
+    .btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(39,174,96,0.35)}
+    .btn-secondary{background:linear-gradient(145deg,var(--burgundy),#D35400)}
+    .btn-outline{background:linear-gradient(145deg,#ffffff,#f3f3f3);color:#222;border:1px solid rgba(0,0,0,.06)}
+    /* Sections */
+    .section{background:var(--glass-dark);border-radius:var(--radius-lg);padding:28px;margin-bottom:24px;border:1px solid rgba(255,255,255,.5);box-shadow:var(--shadow-soft)}
+    .section-title{font-family:Poppins,sans-serif;font-size:22px;font-weight:700;margin:0 0 16px;color:var(--charcoal);display:flex;align-items:center;gap:10px}
+    .highlight-box{background:linear-gradient(135deg,rgba(230,126,34,0.1),rgba(230,126,34,0.05));border:2px solid rgba(230,126,34,0.3);border-radius:var(--radius-sm);padding:20px;margin:18px 0;text-align:center}
+    .highlight-text{font-family:Poppins,sans-serif;font-size:18px;font-weight:600;color:var(--burgundy);font-style:italic;margin-bottom:8px}
+    /* Stats */
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:14px}
+    .stat-card{background:rgba(255,255,255,0.72);border-radius:var(--radius-sm);padding:18px;text-align:center;border:1px solid rgba(241,196,15,0.3)}
+    .stat-number{font-family:Poppins,sans-serif;font-size:26px;font-weight:800;color:var(--burgundy);margin-bottom:6px}
+    .stat-label{font-size:13px;color:var(--bronze);font-weight:600}
+    /* Values */
+    .values-list{list-style:none;padding:0;margin:12px 0}
+    .values-list li{padding:8px 0;display:flex;align-items:center;gap:10px;font-weight:500}
+    .values-list li::before{content:"➜";font-size:16px;color:var(--burgundy)}
+    /* Timeline */
+    .timeline{position:relative;margin-top:6px}
+    .timeline::before{content:"";position:absolute;left:10px;top:0;bottom:0;width:2px;background:rgba(230,126,34,.35)}
+    .t-item{position:relative;padding-left:28px;margin:14px 0}
+    .t-item::before{content:"";position:absolute;left:4px;top:6px;width:12px;height:12px;border-radius:50%;background:linear-gradient(145deg,var(--burgundy),#D35400);box-shadow:0 0 0 3px rgba(230,126,34,.15)}
+    .t-title{font-weight:800}
+    .t-meta{font-size:12px;color:#6b6b6b}
+    /* FAQ */
+    .faq{display:grid;gap:10px}
+    details{background:rgba(255,255,255,.7);padding:14px;border-radius:16px;border:1px solid rgba(0,0,0,.06)}
+    summary{cursor:pointer;font-weight:700}
+    /* Footer */
+    .powered-footer{text-align:center;margin-top:28px;padding:16px;background:rgba(255,255,255,0.35);border-radius:var(--radius-sm);border:1px solid rgba(255,255,255,0.45);font-size:14px;color:var(--bronze)}
+    /* Mobile */
+    @media (max-width:768px){.container{padding:16px}.section{padding:22px}.brand-name{font-size:24px}.section-title{font-size:20px}.logo{width:80px;height:80px}.stats-grid{grid-template-columns:1fr 1fr}.stat-number{font-size:24px}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <a href="/" class="logo-link" aria-label="Go to home">
+        <img src="new_logo.png" alt="Bold Munch Logo" class="logo" />
+        <div class="brand-name">Bold Munch</div>
+        <div class="tagline">Premium Handmade Goodness</div>
+      </a>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0 4px">
+        <span class="delivery-pill" title="We deliver on Saturdays">
+          Delivery Day: <strong>Saturdays</strong>
+        </span>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:10px">
+        <a href="/" class="btn">← Back to Menu</a>
+        <a href="/order" class="btn btn-secondary">🛒 Order Now</a>
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <section class="section" aria-labelledby="about-title">
+      <h2 class="section-title" id="about-title">🏆 About Bold Munch</h2>
+      <p>Welcome to <strong>Bold Munch</strong> — your trusted bakery platform bringing artisanal goodness straight to your door. We're passionate about creating beautiful, handmade treats using only natural ingredients.</p>
+      <div class="highlight-box">
+        <div class="highlight-text">"Every bite tells a story of passion and care."</div>
+        <p style="margin:0;color:var(--bronze);font-size:14px;">— The Bold Munch Philosophy</p>
+      </div>
+      <p>Born from a love of baking, Bold Munch connects you with premium handcrafted pastries. From our signature banana breads and traditional meat pies to authentic Nigerian puff puff — every item is made fresh with natural ingredients and delivered with care.</p>
+    </section>
+
+    <!-- Our Commitment Section -->
+    <section class="section" aria-labelledby="commitment-title">
+      <h2 class="section-title" id="commitment-title">🌿 Our Commitment to Excellence</h2>
+      <div class="stats-grid" role="list">
+        <div class="stat-card" role="listitem">
+          <div class="stat-number">100%</div>
+          <div class="stat-label">Natural Ingredients</div>
+        </div>
+        <div class="stat-card" role="listitem">
+          <div class="stat-number">24hrs</div>
+          <div class="stat-label">Fresh Daily</div>
+        </div>
+        <div class="stat-card" role="listitem">
+          <div class="stat-number">8+</div>
+          <div class="stat-label">Signature Varieties</div>
+        </div>
+        <div class="stat-card" role="listitem">
+          <div class="stat-number">5⭐</div>
+          <div class="stat-label">Premium Service</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Story / Timeline -->
+    <section class="section" aria-labelledby="story-title">
+      <h2 class="section-title" id="story-title">📜 Our Story</h2>
+      <div class="timeline" aria-label="Milestones timeline">
+        <div class="t-item">
+          <div class="t-title">Home‑baked beginnings</div>
+          <div class="t-meta">Crafting banana breads for friends & family</div>
+        </div>
+        <div class="t-item">
+          <div class="t-title">Signature recipes perfected</div>
+          <div class="t-meta">From classic loaves to triple‑choc cookies</div>
+        </div>
+        <div class="t-item">
+          <div class="t-title">Bold Munch launches</div>
+          <div class="t-meta">Taking premium handmade goodness to your door</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Specialties -->
+    <section class="section" aria-labelledby="specialties-title">
+      <h2 class="section-title" id="specialties-title">🍞 Our Elite Specialties</h2>
+      <p><strong>Signature Banana Breads:</strong> Our platform specializes in freshly baked banana bread varieties — from classic to double chocolate and Nutella. Each loaf is crafted with care using natural ingredients.</p>
+      <p><strong>Traditional Meat Pies:</strong> Crispy, golden pastry filled with perfectly seasoned beef. These aren't just pies; they're comfort food made with love.</p>
+      <p><strong>Authentic Nigerian Puff Puff:</strong> Soft, fluffy, and lightly spiced — we bring the true taste of Nigeria to your doorstep through our easy-to-use platform.</p>
+      <div class="highlight-box">
+        <div class="highlight-text">Event Catering Available</div>
+        <p style="margin:0;color:var(--bronze);font-size:14px;">Let us make your special moments sweeter with our catering services.</p>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" aria-labelledby="faq-title">
+      <h2 class="section-title" id="faq-title">❓ FAQ</h2>
+      <div class="faq">
+        <details>
+          <summary>Which days do you deliver?</summary>
+          <p>We deliver every <strong>Saturday</strong>. Order before 9AM Friday to get fresh goodies delivered to your door.</p>
+        </details>
+        <details>
+          <summary>How fresh are the products?</summary>
+          <p>Everything is baked to order within 24 hours of delivery for peak freshness.</p>
+        </details>
+        <details>
+          <summary>Do you take custom orders?</summary>
+          <p>Yes! Share your request and we’ll confirm availability, pricing, and timelines.</p>
+        </details>
+      </div>
+    </section>
+
+    <!-- Contact & Order -->
+    <section class="section" aria-labelledby="contact-title">
+      <h2 class="section-title" id="contact-title">📞 Experience Bold Munch</h2>
+      <p>Ready to try our delicious handmade treats? We'd love to hear from you and help make your day a little sweeter.</p>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap">
+        <a href="/" class="btn btn-secondary">🛒 Browse Menu</a>
+        <a href="https://wa.me/447908365721?text=Hi%20Bold%20Munch!%20I'd%20like%20to%20make%20an%20enquiry." target="_blank" class="btn btn-outline">📞 WhatsApp Us</a>
+      </div>
+    </section>
+
+    <!-- Powered by Footer -->
+    <footer class="powered-footer">
+      Powered by <a href="https://www.gen3block.com" target="_blank" style="color: inherit; text-decoration: none; font-weight: 600;">Gen3block AI</a>
+    </footer>
+  </div>
+</body>
+</html>
