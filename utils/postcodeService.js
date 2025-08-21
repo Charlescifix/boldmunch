@@ -7,13 +7,17 @@ class PostcodeService {
 
   // Validate and geocode a UK postcode
   async validateAndGeocode(postcode) {
+    console.log(`📎 Starting postcode validation for: '${postcode}'`);
+    
     try {
       // Clean the postcode
       const cleanPostcode = postcode.replace(/\s+/g, '').toUpperCase();
+      console.log(`🧭 Cleaned postcode: '${cleanPostcode}'`);
       
       // Validate format (basic UK postcode pattern)
       const postcodeRegex = /^[A-Z]{1,2}[0-9][A-Z0-9]?[0-9][A-Z]{2}$/;
       if (!postcodeRegex.test(cleanPostcode)) {
+        console.warn(`⚠️  Invalid postcode format: '${cleanPostcode}'`);
         return {
           valid: false,
           error: 'Invalid UK postcode format'
@@ -22,14 +26,19 @@ class PostcodeService {
 
       // Add space in correct position for API call
       const formattedPostcode = cleanPostcode.replace(/^(.+)([0-9][A-Z]{2})$/, '$1 $2');
+      console.log(`🔄 Formatted postcode for API: '${formattedPostcode}'`);
 
       // Call postcodes.io API
-      const response = await axios.get(`${this.baseUrl}/postcodes/${encodeURIComponent(formattedPostcode)}`);
+      console.log(`🌐 Calling postcodes.io API for: ${formattedPostcode}`);
+      const response = await axios.get(`${this.baseUrl}/postcodes/${encodeURIComponent(formattedPostcode)}`, {
+        timeout: 10000 // 10 second timeout
+      });
+      
+      console.log(`📡 API Response status: ${response.data.status}`);
       
       if (response.data.status === 200) {
         const result = response.data.result;
-        
-        return {
+        const validationResult = {
           valid: true,
           postcode: result.postcode,
           latitude: result.latitude,
@@ -40,19 +49,45 @@ class PostcodeService {
           country: result.country,
           coordinates: [result.longitude, result.latitude] // [lng, lat] for GeoJSON
         };
+        
+        console.log('✅ Postcode validation successful:', {
+          postcode: validationResult.postcode,
+          coordinates: validationResult.coordinates,
+          district: validationResult.district
+        });
+        
+        return validationResult;
       } else {
+        console.warn(`⚠️  Unexpected API status: ${response.data.status}`);
         return {
           valid: false,
           error: 'Postcode not found'
         };
       }
     } catch (error) {
-      console.error('❌ Postcode validation error:', error.response?.data || error.message);
+      const errorDetails = {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        apiResponse: error.response?.data,
+        postcode: postcode
+      };
+      
+      console.error('❌ Postcode validation error:', errorDetails);
       
       if (error.response?.status === 404) {
+        console.log('📍 Postcode not found in API database');
         return {
           valid: false,
           error: 'Postcode not found'
+        };
+      }
+      
+      if (error.code === 'ECONNABORTED') {
+        console.error('⏰ API timeout - postcodes.io unreachable');
+        return {
+          valid: false,
+          error: 'Postcode validation service temporarily unavailable'
         };
       }
       

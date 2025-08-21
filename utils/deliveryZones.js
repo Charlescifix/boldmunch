@@ -20,13 +20,19 @@ function isPointInPolygon(point, polygon) {
 
 // Hub coordinates - loaded from environment for security
 const getHubCoordinates = () => {
+  console.log('🔧 Loading hub coordinates from environment...');
   const lng = parseFloat(process.env.HUB_LONGITUDE);
   const lat = parseFloat(process.env.HUB_LATITUDE);
   
-  if (!lng || !lat) {
-    throw new Error('Hub coordinates must be set in environment variables: HUB_LONGITUDE, HUB_LATITUDE');
+  console.log(`📍 Hub coordinates check: lng=${lng}, lat=${lat}`);
+  
+  if (!lng || !lat || isNaN(lng) || isNaN(lat)) {
+    const error = `Hub coordinates invalid or missing. HUB_LONGITUDE=${process.env.HUB_LONGITUDE}, HUB_LATITUDE=${process.env.HUB_LATITUDE}`;
+    console.error('❌', error);
+    throw new Error(error);
   }
   
+  console.log('✅ Hub coordinates loaded successfully:', [lng, lat]);
   return [lng, lat]; // [longitude, latitude]
 };
 
@@ -39,8 +45,14 @@ class DeliveryZoneManager {
   // Generate isochrone polygon for given time in minutes
   async generateIsochrone(timeMinutes, profile = 'driving-car') {
     try {
+      console.log(`🗺️  Generating ${timeMinutes}-minute isochrone...`);
       const hubCoords = getHubCoordinates();
       
+      if (!this.apiKey) {
+        throw new Error('OPENROUTESERVICE_API_KEY not configured');
+      }
+      
+      console.log('📡 Calling OpenRouteService API...');
       const response = await axios.post(this.baseUrl, {
         locations: [hubCoords],
         range: [timeMinutes * 60], // Convert minutes to seconds
@@ -51,12 +63,32 @@ class DeliveryZoneManager {
         headers: {
           'Authorization': this.apiKey,
           'Content-Type': 'application/json'
-        }
+        },
+        timeout: 30000 // 30 second timeout
       });
 
+      console.log(`✅ Successfully generated ${timeMinutes}-minute isochrone`);
       return response.data;
     } catch (error) {
-      console.error(`❌ Error generating ${timeMinutes}-minute isochrone:`, error.response?.data || error.message);
+      const errorDetails = {
+        timeMinutes,
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        apiResponse: error.response?.data,
+        timeout: error.code === 'ECONNABORTED'
+      };
+      
+      console.error(`❌ Error generating ${timeMinutes}-minute isochrone:`, errorDetails);
+      
+      if (error.response?.status === 401) {
+        throw new Error('OpenRouteService API key is invalid or expired');
+      }
+      
+      if (error.code === 'ECONNABORTED') {
+        throw new Error('OpenRouteService API timeout - service may be unavailable');
+      }
+      
       throw error;
     }
   }
@@ -112,27 +144,47 @@ class DeliveryZoneManager {
   // Check if a point is within delivery area and calculate fee
   async calculateDeliveryFee(latitude, longitude) {
     try {
+      console.log(`🔍 Calculating delivery fee for coordinates: [${longitude}, ${latitude}]`);
       const pointCoords = [longitude, latitude];
       
       // Get delivery zones from database
+      console.log('📊 Querying delivery zones from database...');
       const zones = await query(`
         SELECT name, polygon, delivery_fee, max_distance_minutes 
         FROM delivery_zones 
         ORDER BY delivery_fee ASC
       `);
 
+      console.log(`📋 Found ${zones.rows.length} delivery zones in database`);
+      
+      if (zones.rows.length === 0) {
+        console.warn('⚠️  No delivery zones found in database! Need to initialize zones.');
+        return {
+          inDeliveryArea: false,
+          deliveryFee: null,
+          zoneName: 'Delivery zones not initialized',
+          maxDistanceMinutes: null,
+          requiresEnquiry: true,
+          error: 'NO_ZONES_CONFIGURED'
+        };
+      }
+
       for (const zone of zones.rows) {
+        console.log(`🧭 Checking if point is in zone: ${zone.name}`);
         if (isPointInPolygon(pointCoords, zone.polygon.coordinates)) {
-          return {
+          const result = {
             inDeliveryArea: true,
             deliveryFee: parseFloat(zone.delivery_fee),
             zoneName: zone.name,
             maxDistanceMinutes: zone.max_distance_minutes
           };
+          console.log('✅ Point found in delivery zone:', result);
+          return result;
         }
       }
 
       // Point is outside all delivery zones - suggest making enquiry
+      console.log('📍 Point is outside all delivery zones');
       return {
         inDeliveryArea: false,
         deliveryFee: null,
@@ -141,7 +193,11 @@ class DeliveryZoneManager {
         requiresEnquiry: true
       };
     } catch (error) {
-      console.error('❌ Error calculating delivery fee:', error);
+      console.error('❌ Error calculating delivery fee:', {
+        error: error.message,
+        stack: error.stack,
+        coordinates: [longitude, latitude]
+      });
       throw error;
     }
   }
@@ -194,12 +250,19 @@ class DeliveryZoneManager {
   // Check if address is in Upton estate for potential free delivery
   isInUptonEstate(latitude, longitude) {
     try {
+      console.log(`🏘️  Checking if coordinates [${longitude}, ${latitude}] are in Upton Estate`);
       const pointCoords = [longitude, latitude];
       const uptonPolygon = this.getUptonEstatePolygon().coordinates;
       
-      return isPointInPolygon(pointCoords, uptonPolygon);
+      const isInUpton = isPointInPolygon(pointCoords, uptonPolygon);
+      console.log(`🏘️  Upton Estate check result: ${isInUpton}`);
+      
+      return isInUpton;
     } catch (error) {
-      console.error('❌ Error checking Upton estate:', error);
+      console.error('❌ Error checking Upton estate:', {
+        error: error.message,
+        coordinates: [longitude, latitude]
+      });
       return false;
     }
   }

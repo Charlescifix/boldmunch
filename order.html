@@ -563,7 +563,30 @@
         
       } catch (error) {
         console.error('Postcode validation error:', error);
-        errorDiv.textContent = 'Unable to validate postcode. Please try again.';
+        
+        // Provide specific error messages based on error type
+        let errorMessage = 'Unable to validate postcode. Please try again.';
+        
+        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+          errorMessage = 'Network error - please check your connection and try again.';
+        } else if (error.message && error.message.includes('timeout')) {
+          errorMessage = 'Request timeout - the service may be busy. Please try again.';
+        } else if (response && response.status === 500) {
+          errorMessage = 'Postcode validation service temporarily unavailable. Please try again later.';
+        }
+        
+        // Show user-friendly error with fallback option
+        errorDiv.innerHTML = `
+          <div>${errorMessage}</div>
+          <div style="margin-top: 8px; font-size: 0.9em;">
+            <span style="color: #666;">Having trouble? </span>
+            <button type="button" onclick="showSpecialDeliveryEnquiry()" 
+                    style="color: var(--accent-color); background: none; border: none; text-decoration: underline; cursor: pointer;">
+              Make a special delivery enquiry
+            </button>
+          </div>
+        `;
+        
         errorDiv.classList.remove('hidden');
         postcodeInput.classList.add('error');
         deliveryValidated = false;
@@ -688,6 +711,12 @@
         submitBtn.disabled = false;
         submitText.textContent = 'Complete Order';
       }
+    }
+    
+    // Function to show special delivery enquiry (fallback for validation errors)
+    function showSpecialDeliveryEnquiry() {
+      const postcode = document.getElementById('postcode').value.trim().toUpperCase() || 'Unknown';
+      makeSpecialDeliveryEnquiry(postcode);
     }
     
     // Function to make special delivery enquiry
