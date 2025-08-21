@@ -62,7 +62,7 @@ router.post('/validate-postcode', async (req, res) => {
           inDeliveryArea: true,
           deliveryFee: 0,
           zoneName: 'Upton Estate - Free Delivery',
-          maxDistanceMinutes: 5,
+          maxDistanceMinutes: 7,
           reason: 'Same estate delivery'
         }
       });

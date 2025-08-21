@@ -529,7 +529,17 @@
             }
           } else {
             deliveryClass += ' delivery-unavailable';
-            deliveryText = `❌ Sorry, we don't deliver to this area yet. Please contact us for special arrangements.`;
+            deliveryText = `
+              <div style="margin-bottom: 16px;">
+                ❌ Sorry, we don't deliver to this area yet.
+              </div>
+              <div style="text-align: center;">
+                <button onclick="makeSpecialDeliveryEnquiry('${data.postcode}')" 
+                        style="padding: 12px 20px; background: linear-gradient(145deg, var(--burgundy), #D35400); color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 14px;">
+                  Make Enquiry for Special Delivery
+                </button>
+              </div>
+            `;
             deliveryFee = 0;
             deliveryValidated = false;
           }
@@ -677,6 +687,46 @@
         
         submitBtn.disabled = false;
         submitText.textContent = 'Complete Order';
+      }
+    }
+    
+    // Function to make special delivery enquiry
+    async function makeSpecialDeliveryEnquiry(postcode) {
+      const message = `Hello Bold Munch! 🚚
+
+I'd like to enquire about special delivery to my area:
+
+📍 Postcode: ${postcode}
+💼 Order details: ${orderData.items.map(item => `${item.qty || 1}x ${item.name}`).join(', ')}
+💰 Order value: £${orderData.subtotal.toFixed(2)}
+
+Could you please let me know if delivery is possible and what the cost would be?
+
+Thank you!`;
+
+      try {
+        const response = await fetch('/api/whatsapp/generate-enquiry', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ 
+            enquiryType: 'special_delivery',
+            message: message,
+            postcode: postcode
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.whatsappUrl) {
+          window.open(data.whatsappUrl, '_blank');
+        } else {
+          alert('Unable to open WhatsApp. Please contact us directly at your convenience.');
+        }
+      } catch (error) {
+        console.error('WhatsApp enquiry error:', error);
+        alert('Connection error. Please try contacting us directly.');
       }
     }
     

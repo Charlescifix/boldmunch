@@ -18,8 +18,17 @@ function isPointInPolygon(point, polygon) {
   return inside;
 }
 
-// Hub coordinates for NN5 4YA (Upton) - updated to match actual postcode lookup
-const HUB_COORDINATES = [-0.950749, 52.229993]; // [longitude, latitude]
+// Hub coordinates - loaded from environment for security
+const getHubCoordinates = () => {
+  const lng = parseFloat(process.env.HUB_LONGITUDE);
+  const lat = parseFloat(process.env.HUB_LATITUDE);
+  
+  if (!lng || !lat) {
+    throw new Error('Hub coordinates must be set in environment variables: HUB_LONGITUDE, HUB_LATITUDE');
+  }
+  
+  return [lng, lat]; // [longitude, latitude]
+};
 
 class DeliveryZoneManager {
   constructor() {
@@ -30,8 +39,10 @@ class DeliveryZoneManager {
   // Generate isochrone polygon for given time in minutes
   async generateIsochrone(timeMinutes, profile = 'driving-car') {
     try {
+      const hubCoords = getHubCoordinates();
+      
       const response = await axios.post(this.baseUrl, {
-        locations: [HUB_COORDINATES],
+        locations: [hubCoords],
         range: [timeMinutes * 60], // Convert minutes to seconds
         range_type: 'time',
         attributes: ['area', 'reachfactor'],
@@ -121,12 +132,13 @@ class DeliveryZoneManager {
         }
       }
 
-      // Point is outside all delivery zones
+      // Point is outside all delivery zones - suggest making enquiry
       return {
         inDeliveryArea: false,
         deliveryFee: null,
         zoneName: 'Outside delivery area',
-        maxDistanceMinutes: null
+        maxDistanceMinutes: null,
+        requiresEnquiry: true
       };
     } catch (error) {
       console.error('❌ Error calculating delivery fee:', error);
@@ -152,17 +164,31 @@ class DeliveryZoneManager {
 
   // Manual polygon for Upton estate (immediate area around hub for free delivery)
   getUptonEstatePolygon() {
-    // Polygon around NN5 4YA for local free delivery
-    return {
-      type: 'Polygon',
-      coordinates: [[
-        [-0.955, 52.225], // Southwest corner
-        [-0.945, 52.225], // Southeast corner  
-        [-0.945, 52.235], // Northeast corner
-        [-0.955, 52.235], // Northwest corner
-        [-0.955, 52.225]  // Close polygon
-      ]]
-    };
+    try {
+      const hubCoords = getHubCoordinates();
+      const [hubLng, hubLat] = hubCoords;
+      
+      // Create a small polygon around the hub (approximately 0.01 degrees radius)
+      const offset = 0.005;
+      
+      return {
+        type: 'Polygon',
+        coordinates: [[
+          [hubLng - offset, hubLat - offset], // Southwest corner
+          [hubLng + offset, hubLat - offset], // Southeast corner  
+          [hubLng + offset, hubLat + offset], // Northeast corner
+          [hubLng - offset, hubLat + offset], // Northwest corner
+          [hubLng - offset, hubLat - offset]  // Close polygon
+        ]]
+      };
+    } catch (error) {
+      console.error('❌ Error generating Upton estate polygon:', error);
+      // Fallback to empty polygon if coordinates not available
+      return {
+        type: 'Polygon',
+        coordinates: [[]]
+      };
+    }
   }
 
   // Check if address is in Upton estate for potential free delivery
