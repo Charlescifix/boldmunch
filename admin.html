@@ -424,7 +424,42 @@
       background: linear-gradient(145deg, #eafff0, #e0ffe8);
     }
 
-    /* Mobile Responsive */
+    /* Tablet Responsive (768px - 1024px) */
+    @media (max-width: 1024px) and (min-width: 769px) {
+      .container {
+        padding: 18px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+      }
+
+      .orders-table {
+        font-size: 15px;
+      }
+
+      .orders-table th,
+      .orders-table td {
+        padding: 14px 10px;
+      }
+
+      .section-header {
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .filters {
+        gap: 10px;
+      }
+
+      .btn {
+        padding: 12px 18px;
+        font-size: 14px;
+      }
+    }
+
+    /* Mobile Responsive (768px and below) */
     @media (max-width: 768px) {
       .container {
         padding: 16px;

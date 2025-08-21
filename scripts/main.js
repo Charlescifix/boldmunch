@@ -782,7 +782,7 @@ function showIngredientModal(content) {
   modalContent.innerHTML = `
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
       <h3 style="margin: 0; font-family: Poppins, sans-serif; color: var(--charcoal);">🍞 Ingredients Information</h3>
-      <button onclick="this.closest('.cart-modal').remove()" style="background: #e74c3c; color: white; border: none; width: 30px; height: 30px; border-radius: 15px; cursor: pointer; font-size: 16px; font-weight: bold;">×</button>
+      <button onclick="this.closest('.cart-modal').remove()" style="background: #e74c3c; color: white; border: none; width: 44px; height: 44px; border-radius: 22px; cursor: pointer; font-size: 18px; font-weight: bold; display: flex; align-items: center; justify-content: center;">×</button>
     </div>
     <div style="white-space: pre-line; font-size: 14px; line-height: 1.6; color: var(--charcoal); max-height: 60vh; overflow-y: auto;">${sanitizeInput(content)}</div>
     <div style="margin-top: 20px; text-align: center;">
