@@ -30,8 +30,8 @@ app.use(cors({
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  windowMs: process.env.RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000, // Default: 15 minutes
+  max: process.env.RATE_LIMIT_MAX_REQUESTS || 100, // Default: 100 requests per window
   message: 'Too many requests from this IP, please try again later.'
 });
 app.use(limiter);
@@ -40,8 +40,29 @@ app.use(limiter);
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files
-app.use(express.static('.'));
+// Serve static files with caching headers
+app.use(express.static('.', {
+  maxAge: process.env.NODE_ENV === 'production' 
+    ? process.env.STATIC_FILES_CACHE_PRODUCTION || '7d'
+    : process.env.STATIC_FILES_CACHE_DEV || '1h',
+  etag: true,
+  lastModified: true,
+  setHeaders: (res, path) => {
+    if (path.endsWith('.html')) {
+      // Cache HTML files for shorter time to allow content updates
+      res.setHeader('Cache-Control', `public, max-age=${process.env.HTML_CACHE_MAX_AGE || 3600}`); // Default: 1 hour
+    } else if (path.match(/\.(js|css)$/)) {
+      // Cache JS/CSS files longer
+      res.setHeader('Cache-Control', `public, max-age=${process.env.JS_CSS_CACHE_MAX_AGE || 604800}`); // Default: 7 days
+    } else if (path.match(/\.(jpg|jpeg|png|gif|webp|svg|ico)$/)) {
+      // Cache images for a long time
+      res.setHeader('Cache-Control', `public, max-age=${process.env.IMAGES_CACHE_MAX_AGE || 2592000}`); // Default: 30 days
+    } else if (path.match(/\.(woff|woff2|ttf|eot)$/)) {
+      // Cache fonts for a very long time
+      res.setHeader('Cache-Control', `public, max-age=${process.env.FONTS_CACHE_MAX_AGE || 31536000}`); // Default: 1 year
+    }
+  }
+}));
 
 // Import routes
 const deliveryRoutes = require('./routes/delivery');
@@ -62,6 +83,21 @@ app.get('/api/health', (req, res) => {
 
 // Serve main page
 app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/home.html');
+});
+
+// Serve about page
+app.get('/about', (req, res) => {
+  res.sendFile(__dirname + '/about.html');
+});
+
+// Serve order page
+app.get('/order', (req, res) => {
+  res.sendFile(__dirname + '/order.html');
+});
+
+// Contact route - redirects to home with enquiry functionality
+app.get('/contact', (req, res) => {
   res.sendFile(__dirname + '/home.html');
 });
 
