@@ -42,45 +42,6 @@ router.post('/validate-postcode', async (req, res) => {
     
     console.log('✅ Postcode validation successful, checking delivery zones...');
 
-    // Check if in Upton estate first (optional free delivery for same estate)
-    const isInUpton = deliveryZones.isInUptonEstate(
-      postcodeResult.latitude, 
-      postcodeResult.longitude
-    );
-
-    console.log(`🏘️  Upton estate check for ${postcodeResult.postcode}:`, {
-      coordinates: [postcodeResult.longitude, postcodeResult.latitude],
-      isInUpton,
-      reason: isInUpton ? 'Within Upton Estate boundaries' : 'Outside Upton Estate'
-    });
-
-    if (isInUpton) {
-      const response = {
-        success: true,
-        postcode: postcodeResult.postcode,
-        coordinates: {
-          latitude: postcodeResult.latitude,
-          longitude: postcodeResult.longitude
-        },
-        location: {
-          district: postcodeResult.district,
-          ward: postcodeResult.ward,
-          region: postcodeResult.region
-        },
-        delivery: {
-          inDeliveryArea: true,
-          deliveryFee: 0,
-          zoneName: 'Upton Estate - Free Delivery',
-          maxDistanceMinutes: 7,
-          reason: 'Same estate delivery'
-        }
-      };
-      
-      const duration = Date.now() - startTime;
-      console.log(`✅ Request completed (${duration}ms) - Upton Estate free delivery:`, response.delivery);
-      return res.json(response);
-    }
-
     // Calculate delivery fee using time-based polygons
     const deliveryInfo = await deliveryZones.calculateDeliveryFee(
       postcodeResult.latitude,
@@ -133,11 +94,11 @@ router.get('/zones', async (req, res) => {
     const zones = await deliveryZones.getDeliveryZones();
     
     if (zones.length === 0) {
-      console.warn('⚠️  No delivery zones found in database');
+      console.warn('⚠️  No delivery zones configured');
       return res.json({
         success: true,
         zones: [],
-        warning: 'No delivery zones configured - run /initialize-zones'
+        warning: 'Delivery zones are calculated in real-time'
       });
     }
     
@@ -173,48 +134,45 @@ router.get('/zones', async (req, res) => {
   }
 });
 
-// Initialize delivery zones (admin endpoint)
-router.post('/initialize-zones', async (req, res) => {
+// Get system status (replaces initialize-zones endpoint)
+router.get('/status', async (req, res) => {
   const startTime = Date.now();
-  console.log(`🚀 [${new Date().toISOString()}] POST /initialize-zones - Zone initialization requested`);
+  console.log(`📊 [${new Date().toISOString()}] GET /status - System status requested`);
   
   try {
-    // This should be protected in production
-    if (process.env.NODE_ENV === 'production') {
-      console.warn('⚠️  Zone initialization attempted in production environment');
-      return res.status(403).json({
-        success: false,
-        error: 'Endpoint not available in production'
-      });
-    }
-
-    console.log('🌐 Starting delivery zone initialization...');
-    const zones = await deliveryZones.initializeDeliveryZones();
+    const { freeMinutes, maxMinutes, standardFee } = require('../utils/deliveryZones').getDeliverySettings ? 
+      require('../utils/deliveryZones').getDeliverySettings() : 
+      { freeMinutes: 7, maxMinutes: 15, standardFee: 3.00 };
+    
+    const hubLng = parseFloat(process.env.HUB_LONGITUDE);
+    const hubLat = parseFloat(process.env.HUB_LATITUDE);
+    const apiKey = process.env.OPENROUTESERVICE_API_KEY;
     
     const duration = Date.now() - startTime;
-    console.log(`✅ Delivery zones initialized successfully (${duration}ms)`);
     
     res.json({
       success: true,
-      message: 'Delivery zones initialized successfully',
-      zones,
+      system: {
+        deliverySystem: 'Real-time Matrix API',
+        hubCoordinates: [hubLng, hubLat],
+        hubPostcode: process.env.HUB_POSTCODE,
+        settings: {
+          freeDeliveryMinutes: freeMinutes,
+          maxDeliveryMinutes: maxMinutes,
+          standardFee: standardFee
+        },
+        apiConfigured: !!apiKey,
+        coordinatesConfigured: !!(hubLng && hubLat)
+      },
       duration: `${duration}ms`
     });
   } catch (error) {
     const duration = Date.now() - startTime;
-    const errorDetails = {
-      message: error.message,
-      stack: error.stack,
-      duration: `${duration}ms`,
-      environment: process.env.NODE_ENV
-    };
-    
-    console.error(`❌ Error initializing delivery zones (${duration}ms):`, errorDetails);
+    console.error(`❌ Error getting system status (${duration}ms):`, error);
     res.status(500).json({
       success: false,
-      error: 'Failed to initialize delivery zones',
-      details: error.message,
-      ...(process.env.NODE_ENV === 'development' && { debug: errorDetails })
+      error: 'Unable to get system status',
+      duration: `${duration}ms`
     });
   }
 });

@@ -67,28 +67,11 @@ router.post('/create', async (req, res) => {
       });
     }
 
-    // Check if in Upton estate first (same logic as frontend validation)
-    const isInUpton = deliveryZones.isInUptonEstate(
-      postcodeResult.latitude, 
+    // Calculate delivery fee using time-based polygons
+    const deliveryInfo = await deliveryZones.calculateDeliveryFee(
+      postcodeResult.latitude,
       postcodeResult.longitude
     );
-
-    let deliveryInfo;
-    if (isInUpton) {
-      deliveryInfo = {
-        inDeliveryArea: true,
-        deliveryFee: 0,
-        zoneName: 'Upton Estate - Free Delivery',
-        maxDistanceMinutes: 5,
-        reason: 'Same estate delivery'
-      };
-    } else {
-      // Calculate delivery fee using time-based polygons
-      deliveryInfo = await deliveryZones.calculateDeliveryFee(
-        postcodeResult.latitude,
-        postcodeResult.longitude
-      );
-    }
 
     if (!deliveryInfo.inDeliveryArea) {
       return res.status(400).json({
@@ -350,7 +333,10 @@ router.get('/admin/summary', verifyToken, async (req, res) => {
       SELECT 
         order_number, 
         customer_name, 
+        customer_phone,
+        delivery_address,
         postcode, 
+        items,
         status, 
         total::numeric(10,2) as total,
         delivery_zone, 
