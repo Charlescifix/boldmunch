@@ -24,7 +24,7 @@ app.use(helmet({
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
     ? [
-        'https://boldmunch-production.up.railway.app',
+        'https://boldmunch.up.railway.app',
         'https://*.up.railway.app',
         process.env.FRONTEND_URL
       ].filter(Boolean)
