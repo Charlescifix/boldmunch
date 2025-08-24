@@ -73,6 +73,8 @@
       will-change: transform, box-shadow;
       contain: layout;
       margin: 0;
+      cursor: pointer;
+      user-select: none;
     }
     
     .product-card::before {
@@ -115,6 +117,60 @@
     .product-card:hover::before,
     .product-card:hover::after {
       opacity: 1;
+    }
+    
+    /* Mobile/Tablet Interactive Effects */
+    .product-card:active {
+      transform: translateY(-2px) scale(0.98);
+      transition: all 0.1s ease;
+    }
+    
+    .product-card.vibrate {
+      animation: vibrate 0.3s linear;
+    }
+    
+    .product-card.pulse {
+      animation: pulse 0.6s ease-out;
+    }
+    
+    @keyframes vibrate {
+      0% { transform: translateX(0); }
+      10% { transform: translateX(-2px); }
+      20% { transform: translateX(2px); }
+      30% { transform: translateX(-2px); }
+      40% { transform: translateX(2px); }
+      50% { transform: translateX(-1px); }
+      60% { transform: translateX(1px); }
+      70% { transform: translateX(-1px); }
+      80% { transform: translateX(1px); }
+      90% { transform: translateX(-1px); }
+      100% { transform: translateX(0); }
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(241,196,15,0.4); }
+      25% { transform: scale(1.05); }
+      50% { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(241,196,15,0.1); }
+      75% { transform: scale(1.02); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(241,196,15,0); }
+    }
+    
+    /* Touch feedback for mobile */
+    @media (pointer: coarse) {
+      .product-card {
+        transition: all 0.2s ease;
+      }
+      
+      .product-card:active {
+        transform: scale(0.95);
+        background: rgba(255,255,255,0.5);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      }
+      
+      .product-card:active::before,
+      .product-card:active::after {
+        opacity: 1;
+      }
     }
     
     /* Individual product card colors */
@@ -542,5 +598,221 @@
       </p>
     </div>
   </footer>
+
+  <script>
+    // Interactive Product Card Effects
+    class ProductInteractivity {
+      constructor() {
+        this.cards = document.querySelectorAll('.product-card');
+        this.isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        this.isTouch = 'ontouchstart' in window;
+        this.init();
+      }
+
+      init() {
+        this.cards.forEach((card, index) => {
+          // Touch events for mobile/tablet
+          if (this.isTouch) {
+            card.addEventListener('touchstart', (e) => this.handleTouchStart(e, card), { passive: true });
+            card.addEventListener('touchend', (e) => this.handleTouchEnd(e, card), { passive: true });
+          }
+          
+          // Click events for all devices
+          card.addEventListener('click', (e) => this.handleClick(e, card, index));
+          
+          // Hover events for desktop
+          if (!this.isTouch) {
+            card.addEventListener('mouseenter', (e) => this.handleHover(e, card));
+          }
+        });
+      }
+
+      handleTouchStart(event, card) {
+        // Add immediate visual feedback on touch
+        card.style.transform = 'scale(0.98)';
+        card.style.transition = 'transform 0.1s ease';
+      }
+
+      handleTouchEnd(event, card) {
+        // Reset after touch
+        setTimeout(() => {
+          card.style.transform = '';
+          card.style.transition = '';
+        }, 100);
+      }
+
+      handleClick(event, card, index) {
+        // Prevent multiple rapid clicks
+        if (card.classList.contains('vibrate') || card.classList.contains('pulse')) {
+          return;
+        }
+
+        // Haptic feedback for mobile devices
+        if (this.isMobile && 'vibrate' in navigator) {
+          navigator.vibrate([50, 30, 50]); // Short vibration pattern
+        }
+
+        // Visual feedback animations
+        if (Math.random() > 0.5) {
+          this.triggerVibration(card);
+        } else {
+          this.triggerPulse(card);
+        }
+
+        // Optional: Log interaction for analytics
+        this.logInteraction(index);
+      }
+
+      handleHover(event, card) {
+        // Additional hover effects for desktop
+        card.style.willChange = 'transform, box-shadow';
+      }
+
+      triggerVibration(card) {
+        card.classList.add('vibrate');
+        setTimeout(() => {
+          card.classList.remove('vibrate');
+        }, 300);
+      }
+
+      triggerPulse(card) {
+        card.classList.add('pulse');
+        setTimeout(() => {
+          card.classList.remove('pulse');
+        }, 600);
+      }
+
+      logInteraction(index) {
+        // Analytics tracking (optional)
+        console.log(`Product card ${index + 1} interacted with`);
+        
+        // You can add Google Analytics or other tracking here
+        if (typeof gtag !== 'undefined') {
+          gtag('event', 'product_card_interaction', {
+            'product_index': index + 1,
+            'interaction_type': this.isTouch ? 'touch' : 'click'
+          });
+        }
+      }
+    }
+
+    // Enhanced scroll-triggered animations
+    class ScrollAnimations {
+      constructor() {
+        this.observer = null;
+        this.init();
+      }
+
+      init() {
+        if ('IntersectionObserver' in window) {
+          this.observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                this.animateCard(entry.target, entry.intersectionRatio);
+              }
+            });
+          }, {
+            threshold: [0.1, 0.5, 0.8],
+            rootMargin: '20px'
+          });
+
+          // Observe all product cards
+          document.querySelectorAll('.product-card').forEach(card => {
+            this.observer.observe(card);
+          });
+        }
+      }
+
+      animateCard(card, ratio) {
+        // Staggered entrance animation
+        const delay = Array.from(card.parentNode.children).indexOf(card) * 100;
+        
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+          
+          // Add a subtle bounce effect
+          if (ratio > 0.5) {
+            card.style.animation = 'cardEntrance 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+          }
+        }, delay);
+      }
+    }
+
+    // Enhanced mobile experience
+    class MobileEnhancements {
+      constructor() {
+        this.init();
+      }
+
+      init() {
+        // Add CSS for card entrance animation
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes cardEntrance {
+            0% { transform: translateY(30px) scale(0.9); opacity: 0; }
+            60% { transform: translateY(-5px) scale(1.02); }
+            100% { transform: translateY(0) scale(1); opacity: 1; }
+          }
+          
+          .product-card {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease;
+          }
+          
+          /* Enhanced mobile touch targets */
+          @media (max-width: 768px) {
+            .product-card {
+              min-height: 200px;
+              padding: 20px;
+            }
+            
+            .product-card:active {
+              transform: scale(0.96) !important;
+              box-shadow: 0 6px 20px rgba(0,0,0,0.1) !important;
+            }
+          }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize enhanced touch feedback
+        if ('ontouchstart' in window) {
+          this.initTouchFeedback();
+        }
+      }
+
+      initTouchFeedback() {
+        document.addEventListener('touchstart', (e) => {
+          if (e.target.closest('.product-card')) {
+            e.target.closest('.product-card').style.transition = 'all 0.1s ease';
+          }
+        }, { passive: true });
+
+        document.addEventListener('touchend', (e) => {
+          if (e.target.closest('.product-card')) {
+            setTimeout(() => {
+              const card = e.target.closest('.product-card');
+              card.style.transition = '';
+            }, 150);
+          }
+        }, { passive: true });
+      }
+    }
+
+    // Initialize all interactive features when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+      new ProductInteractivity();
+      new ScrollAnimations();
+      new MobileEnhancements();
+      
+      console.log('🎉 Product Information page interactive features loaded!');
+    });
+
+    // Prevent context menu on product cards for better mobile experience
+    document.querySelectorAll('.product-card').forEach(card => {
+      card.addEventListener('contextmenu', (e) => e.preventDefault());
+    });
+  </script>
 </body>
 </html>
