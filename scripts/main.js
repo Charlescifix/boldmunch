@@ -16,6 +16,19 @@ const MINI_OTHER_PRICE = 2.5;
 // State for mini selections
 const miniSelections = new Map(); // productId -> array of {variety, size, price}
 
+// Performance optimization - debounce function
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
 // --- Data ---
 const products = [
   // TOP SECTION - Classics, Chocolate, Nutella
@@ -33,7 +46,7 @@ const products = [
     id:"double-choc",
     name:"Double Chocolate Banana Bread",
     desc:"Ultra-rich chocolate banana bread dream.",
-    prices:{medium:14, maxi:21},
+    prices:{medium:14, maxi:20},
     img:"Double Chocolate Bread.jpg",
     type:"bread",
     sizes:["medium","maxi"],
@@ -43,7 +56,7 @@ const products = [
     id:"nutella-classic",
     name:"Nutella Banana Bread",
     desc:"Rich Nutella swirl in every slice.",
-    prices:{medium:14, maxi:21},
+    prices:{medium:14, maxi:20},
     img:"Nutella Bread 2.jpg",
     type:"bread",
     sizes:["medium","maxi"],
@@ -53,7 +66,7 @@ const products = [
     id:"carrot-banana",
     name:"Carrot Banana Bread",
     desc:"Packed with Carrot, Raisins and Walnuts.",
-    prices:{medium:13, maxi:20},
+    prices:{medium:14, maxi:20},
     img:"carrot banana bread.jpeg",
     type:"bread",
     sizes:["medium","maxi"],
@@ -64,7 +77,7 @@ const products = [
     id:"banana-coconut",
     name:"Coconut Bounty Banana Bread",
     desc:"Tropical Coconut and Chocoloate Delight.",
-    prices:{medium:14, maxi:21},
+    prices:{medium:14, maxi:20},
     img:"Coconut bounty banana bread.PNG",
     type:"bread",
     sizes:["medium","maxi"],
@@ -74,7 +87,7 @@ const products = [
     id:"banana-nutty",
     name:"Nutty Banana Bread",
     desc:"Loaded with Crunchy Nuts.",
-    prices:{medium:15, maxi:22},
+    prices:{medium:15, maxi:21},
     img:"Nutty banana bread.PNG",
     type:"bread",
     sizes:["medium","maxi"],
@@ -84,7 +97,7 @@ const products = [
     id:"banana-oats",
     name:"Oats Crumble Banana Bread",
     desc:"Hearty oats topping with a buttery crunch.",
-    prices:{medium:13, maxi:20},
+    prices:{medium:13, maxi:19},
     img:"Oats crumble banana bread.JPG",
     type:"bread",
     sizes:["medium","maxi"],
@@ -94,7 +107,7 @@ const products = [
     id:"banana-oreo",
     name:"Oreo Banana Bread",
     desc:"Chunks of Oreo in every bite.",
-    prices:{medium:14, maxi:21},
+    prices:{medium:14, maxi:20},
     img:"Oreos Banana bread.JPG",
     type:"bread",
     sizes:["medium","maxi"],
@@ -104,7 +117,7 @@ const products = [
     id:"choco-nuts",
     name:"Chocolate Nuts Banana Bread",
     desc:"Decadent chocolate with crunchy nuts.",
-    prices:{medium:15, maxi:22},
+    prices:{medium:15, maxi:21},
     img:"Choco Nuts.jpg",
     type:"bread",
     sizes:["medium","maxi"],
@@ -125,7 +138,7 @@ const products = [
     id:"meatpie-classic",
     name:"Traditional Meat Pie",
     desc:"Golden pastry with juicy beef filling.",
-    price:3.5,
+    price:3.2,
     img:"MEATPIE.PNG",
     type:"minimum",
     minOrder:10,
@@ -133,7 +146,7 @@ const products = [
   },
   {
     id:"puff-puff",
-    name:"Nigerian Puff Puff",
+    name:"Puff Puff",
     desc:"Donut vibes, upgraded.",
     price:0.8,
     img:"Puff Puff.jpg",
@@ -147,14 +160,23 @@ const products = [
 const cart = new Map();
 const selectedSizes = new Map();
 
-// Persistent cart in localStorage
-function saveCart() {
+// Persistent cart in localStorage - optimized
+const debouncedSaveCart = debounce(() => {
   const cartData = {
     items: Array.from(cart.values()),
     subtotal: calculateSubtotal()
   };
-  localStorage.setItem('boldMunchOrder', JSON.stringify(cartData));
-  updateCartDisplay();
+  try {
+    localStorage.setItem('boldMunchOrder', JSON.stringify(cartData));
+    updateCartDisplay();
+  } catch (e) {
+    console.error('Failed to save cart:', e);
+    showNotification('Storage full. Please clear browser data.', 'error');
+  }
+}, 300);
+
+function saveCart() {
+  debouncedSaveCart();
 }
 
 function loadCart() {
@@ -186,14 +208,24 @@ function calculateSubtotal() {
   return Math.round(total * 100) / 100;
 }
 
+// Optimized cart display update with caching
+let cartDisplayCache = { itemCount: 0, subtotal: 0 };
+
 function updateCartDisplay() {
+  const itemCount = Array.from(cart.values()).reduce((sum, item) => sum + item.qty, 0);
+  const subtotal = calculateSubtotal();
+  
+  // Skip update if values haven't changed
+  if (cartDisplayCache.itemCount === itemCount && cartDisplayCache.subtotal === subtotal) {
+    return;
+  }
+  
+  cartDisplayCache = { itemCount, subtotal };
+  
   const cartBar = document.getElementById('cartBar');
   const cartCount = document.getElementById('cartCount');
   const cartTotal = document.getElementById('cartTotal');
   const modalCartTotal = document.getElementById('modalCartTotal');
-  
-  const itemCount = Array.from(cart.values()).reduce((sum, item) => sum + item.qty, 0);
-  const subtotal = calculateSubtotal();
   
   if (itemCount > 0) {
     cartBar.style.display = 'block';
@@ -252,10 +284,13 @@ function updateCartModal() {
   cartItems.innerHTML = html;
 }
 
-// --- Helpers ---
+// --- Optimized Helpers ---
 const $ = (q, el=document) => el.querySelector(q);
 const $$ = (q, el=document) => [...el.querySelectorAll(q)];
-const money = (n) => n.toLocaleString('en-GB',{style:'currency',currency:'GBP'});
+const money = (() => {
+  const formatter = new Intl.NumberFormat('en-GB', {style:'currency',currency:'GBP'});
+  return (n) => formatter.format(n);
+})();
 
 function renderMenu(){
   const grid = $('#menuGrid');
@@ -331,7 +366,7 @@ function renderMenu(){
       money(currentPrice);
     
     card.innerHTML = `
-      <img class="card-img" src="${p.img}" alt="${p.name}">
+      <img class="card-img" src="${p.img}" alt="${p.name}" loading="lazy">
       <div class="card-body">
         <div class="title">${p.name}</div>
         <div class="desc">${p.desc}</div>
@@ -639,6 +674,11 @@ Thank you! 🍰`;
   }
 }
 
+function openContactPage(){
+  console.log('Contact button clicked - navigating to /contact');
+  window.location.href = '/contact';
+}
+
 async function makeEnquiry(){
   const message = `Hello Bold Munch! 👋
 
@@ -680,52 +720,6 @@ Thank you!`;
   }
 }
 
-function showIngredients(){
-  const ingredientsInfo = `🍞 BOLD MUNCH INGREDIENTS 🍞
-
-🥖 CLASSIC BANANA BREAD:
-• Fresh ripe bananas
-• Premium flour
-• Brown sugar
-• Free-range eggs
-• Butter
-• Vanilla extract
-• Baking powder
-• Salt
-
-🍫 CHOCOLATE VARIETIES:
-• Belgian dark chocolate
-• Cocoa powder
-• Chocolate chips
-
-🥥 SPECIALTY ADDITIONS:
-• Coconut flakes
-• Mixed nuts (almonds, walnuts)
-• Rolled oats
-• Oreo cookies
-• Nutella spread
-
-🥧 MEAT PIE:
-• Minced beef
-• Onions & spices
-• Puff pastry
-• Carrots & potatoes
-
-🍩 PUFF PUFF:
-• Flour
-• Sugar
-• Yeast
-• Nutmeg
-• Vegetable oil
-
-⚠️ ALLERGEN INFO:
-• Contains: Gluten, Eggs, Dairy, Nuts
-• Made in facility that processes nuts
-
-💚 All ingredients are fresh & quality sourced!`;
-
-  showIngredientModal(ingredientsInfo);
-}
 
 // --- Notification System ---
 function showNotification(message, type = 'info', duration = 5000) {
@@ -766,86 +760,40 @@ function removeNotification(notification) {
   }, 400);
 }
 
-function showIngredientModal(content) {
-  // Create modal backdrop
-  const modal = document.createElement('div');
-  modal.className = 'cart-modal';
-  modal.style.display = 'flex';
-  
-  // Create modal content
-  const modalContent = document.createElement('div');
-  modalContent.className = 'cart-content';
-  modalContent.style.maxWidth = '600px';
-  modalContent.style.maxHeight = '80vh';
-  
-  // Add header and content
-  modalContent.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <h3 style="margin: 0; font-family: Poppins, sans-serif; color: var(--charcoal);">🍞 Ingredients Information</h3>
-      <button onclick="this.closest('.cart-modal').remove()" style="background: #e74c3c; color: white; border: none; width: 44px; height: 44px; border-radius: 22px; cursor: pointer; font-size: 18px; font-weight: bold; display: flex; align-items: center; justify-content: center;">×</button>
-    </div>
-    <div style="white-space: pre-line; font-size: 14px; line-height: 1.6; color: var(--charcoal); max-height: 60vh; overflow-y: auto;">${sanitizeInput(content)}</div>
-    <div style="margin-top: 20px; text-align: center;">
-      <button onclick="this.closest('.cart-modal').remove()" style="padding: 12px 24px; background: linear-gradient(145deg, var(--burgundy), #D35400); color: white; border: none; border-radius: 12px; font-weight: 800; cursor: pointer;">Close</button>
-    </div>
-  `;
-  
-  modal.appendChild(modalContent);
-  document.body.appendChild(modal);
-  
-  // Close on backdrop click
-  modal.onclick = (e) => {
-    if (e.target === modal) modal.remove();
-  };
-  
-  // Prevent content clicks from closing modal
-  modalContent.onclick = (e) => e.stopPropagation();
-}
 
-// Input Sanitization
+// Optimized Input Sanitization with HTML template
 function sanitizeInput(input) {
   if (typeof input !== 'string') return '';
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#x27;')
-    .replace(/\//g, '&#x2F;');
+  const div = document.createElement('div');
+  div.textContent = input;
+  return div.innerHTML;
 }
 
 // Validate and sanitize form inputs
-function validateInput(input, type = 'text') {
-  if (!input || typeof input !== 'string') return '';
-  
-  // Remove potentially dangerous characters
-  input = input.trim();
-  
-  switch (type) {
-    case 'email':
-      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      return emailRegex.test(input) ? sanitizeInput(input) : '';
-    case 'phone':
-      const phoneRegex = /^[\d\s\+\-\(\)]{7,20}$/;
-      return phoneRegex.test(input) ? sanitizeInput(input) : '';
-    case 'postcode':
-      const postcodeRegex = /^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$/i;
-      return postcodeRegex.test(input) ? sanitizeInput(input.toUpperCase()) : '';
-    default:
-      return sanitizeInput(input).substring(0, 500); // Limit length
-  }
-}
 
-// CSP and XSS Protection
-function preventXSS() {
-  // Remove any inline event handlers that might be injected
-  const elements = document.querySelectorAll('*');
-  elements.forEach(el => {
-    for (let attr of el.attributes) {
-      if (attr.name.startsWith('on')) {
-        el.removeAttribute(attr.name);
-      }
+// Optimized XSS Protection with MutationObserver
+const xssObserver = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.type === 'childList') {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          // Remove dangerous attributes
+          const dangerousAttrs = ['onload', 'onerror', 'onclick', 'onmouseover'];
+          dangerousAttrs.forEach(attr => {
+            if (node.hasAttribute(attr)) {
+              node.removeAttribute(attr);
+            }
+          });
+        }
+      });
     }
+  });
+});
+
+function preventXSS() {
+  xssObserver.observe(document.body, {
+    childList: true,
+    subtree: true
   });
 }
 
@@ -885,4 +833,20 @@ document.addEventListener('DOMContentLoaded',()=>{
   preventXSS(); // Run XSS protection on load
   renderMenu();
   loadCart();
+  
+  // Make sure openContactPage function is available globally
+  window.openContactPage = openContactPage;
+  
+  // Add event listener to contact button as backup
+  setTimeout(() => {
+    const contactBtn = document.querySelector('button[onclick*="openContactPage"]');
+    if (contactBtn) {
+      console.log('Contact button found and backup event listener attached');
+      contactBtn.addEventListener('click', function(e) {
+        console.log('Contact button clicked via event listener');
+        // Don't prevent default here, let the onclick work
+        // This is just a backup in case onclick fails
+      });
+    }
+  }, 1000);
 });

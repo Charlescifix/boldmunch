@@ -5,7 +5,7 @@ const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3002;
 
 // Security middleware
 app.use(helmet({
@@ -96,9 +96,9 @@ app.get('/order', (req, res) => {
   res.sendFile(__dirname + '/order.html');
 });
 
-// Contact route - redirects to home with enquiry functionality
+// Contact route - serves the contact page
 app.get('/contact', (req, res) => {
-  res.sendFile(__dirname + '/home.html');
+  res.sendFile(__dirname + '/contact.html');
 });
 
 // Serve admin panel

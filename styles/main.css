@@ -17,12 +17,14 @@
 html,body{margin:0;background:linear-gradient(180deg,var(--cream),#ffffff);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:var(--charcoal)}
 a{color:inherit}
 
-/* Header */
+/* Header - Optimized */
 header{
   position:sticky;top:0;z-index:20;
   backdrop-filter:blur(12px);
   background:linear-gradient(180deg,rgba(255,255,255,.85),rgba(255,255,255,.55));
   border-bottom:1px solid rgba(0,0,0,.06);
+  will-change:transform;
+  transform:translateZ(0);
 }
 .container{max-width:1100px;margin:0 auto;padding:16px}
 .brand{
@@ -63,7 +65,7 @@ header{
   text-transform:none;letter-spacing:0.5px
 }
 .delivery-pill:hover{transform:scale(1.03)}
-@keyframes deliveryBounce{0%,20%,50%,80%,100%{transform:scale(1)}10%{transform:scale(1.02)}30%{transform:scale(1.01)}}
+@keyframes deliveryBounce{0%,20%,50%,80%,100%{transform:scale(1) translateZ(0)}10%{transform:scale(1.02) translateZ(0)}30%{transform:scale(1.01) translateZ(0)}}
 @keyframes shimmer{0%{left:-100%}100%{left:100%}}
 .arrow-bounce{display:inline-block;animation:arrow 1.2s infinite ease-in-out}
 @keyframes arrow{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}
@@ -305,7 +307,7 @@ header{
 }
 .service-buttons {
   display: flex;
-  gap: 10px;
+  gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
   align-items: center;
@@ -314,19 +316,19 @@ header{
   background: linear-gradient(145deg, #E67E22, #D35400);
   color: #fff;
   font-weight: 800;
-  padding: 12px 16px;
+  padding: 16px 24px;
   border-radius: 999px;
   border: none;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   box-shadow: 0 4px 16px rgba(230,126,34,0.3);
   transition: transform 0.25s ease;
   letter-spacing: 0.3px;
   text-transform: uppercase;
   border: 2px solid rgba(255,255,255,0.4);
   flex: 1;
-  min-width: 140px;
-  max-width: 180px;
+  min-width: 180px;
+  max-width: 220px;
 }
 .special-btn:hover {
   transform: translateY(-2px);
@@ -336,18 +338,21 @@ header{
   background: linear-gradient(145deg, #8B4513, #A0522D);
   color: #fff;
   font-weight: 700;
-  padding: 12px 16px;
+  padding: 16px 24px;
   border-radius: 999px;
   border: none;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 14px;
   box-shadow: 0 4px 16px rgba(139,69,19,0.3);
   transition: transform 0.25s ease;
   letter-spacing: 0.3px;
   border: 2px solid rgba(255,255,255,0.3);
   flex: 1;
-  min-width: 140px;
-  max-width: 180px;
+  min-width: 180px;
+  max-width: 220px;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
 }
 .ingredients-btn:hover {
   transform: translateY(-2px);
@@ -357,7 +362,7 @@ header{
   background: linear-gradient(145deg, #27AE60, #1E8449);
   color: #fff;
   font-weight: 700;
-  padding: 12px 16px;
+  padding: 16px 24px;
   border-radius: 999px;
   border: none;
   cursor: pointer;
@@ -365,14 +370,14 @@ header{
   text-decoration: none;
   display: inline-block;
   text-align: center;
-  font-size: 13px;
+  font-size: 14px;
   letter-spacing: 0.3px;
   font-family: Inter, system-ui, sans-serif;
   box-shadow: 0 4px 16px rgba(39,174,96,0.3);
   border: 2px solid rgba(255,255,255,0.3);
   flex: 1;
-  min-width: 140px;
-  max-width: 180px;
+  min-width: 180px;
+  max-width: 220px;
 }
 .about-btn:hover {
   transform: translateY(-2px);
@@ -598,7 +603,15 @@ img {
 
 /* Re-enable pointer events for interactive elements */
 button, a, select, input {
-  pointer-events: auto;
+  pointer-events: auto !important;
+}
+
+/* Ensure service buttons are always clickable */
+.special-btn, .ingredients-btn, .about-btn {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 10;
+  position: relative;
 }
 
 /* Notification System */
@@ -664,7 +677,20 @@ button, a, select, input {
   transform: scale(1.1);
 }
 
+/* Performance Optimizations */
+*,*::before,*::after{box-sizing:border-box}
+img{display:block;max-width:100%;height:auto}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:0.01ms!important;animation-iteration-count:1!important;transition-duration:0.01ms!important;scroll-behavior:auto!important}}
+
+/* Critical Resource Hints */
+.card-img{will-change:transform;contain:layout style paint}
+.notification{will-change:transform;contain:layout style paint}
+
 /* Utilities */
 .hidden{display:none}
 .spacer{height:6px}
 .mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mt-24{margin-top:24px}
+
+/* Loading Performance */
+.lazy-load{opacity:0;transition:opacity .3s ease}
+.lazy-load.loaded{opacity:1}
