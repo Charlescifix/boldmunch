@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Information — Bold Munch</title>
+  <meta name="description" content="Detailed information about Bold Munch products including banana breads, meat pies, and puff puff. Learn about ingredients, allergens, and storage.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="preload" href="styles/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="styles/main.css"></noscript>
+  <style>
+    body {
+      background: linear-gradient(180deg, #FEFCF8, #FDF9F4);
+      min-height: 100vh;
+    }
+    
+    .product-info-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+    
+    .page-header {
+      text-align: center;
+      margin-bottom: 28px;
+      padding: 20px;
+      background: rgba(255,255,255,0.4);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.05);
+      border: 1px solid rgba(241,196,15,0.15);
+      backdrop-filter: blur(15px);
+    }
+    
+    .page-title {
+      font-family: Poppins, sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--charcoal);
+      margin: 0 0 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--bronze);
+      font-weight: 600;
+      margin: 0;
+    }
+    
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 20px;
+      max-width: 950px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .product-card {
+      background: rgba(255,255,255,0.3);
+      border-radius: 0;
+      padding: 18px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+      border: 1px solid rgba(255,255,255,0.4);
+      backdrop-filter: blur(25px);
+      transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      position: relative;
+      overflow: hidden;
+      will-change: transform, box-shadow;
+      contain: layout;
+      margin: 0;
+    }
+    
+    .product-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #FFD700, #FF6B35, #E67E22, #8B4513);
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    
+    .product-card::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, 
+        rgba(255,215,0,0.1) 0%, 
+        rgba(230,126,34,0.1) 25%, 
+        rgba(139,69,19,0.1) 50%, 
+        rgba(39,174,96,0.1) 75%, 
+        rgba(255,215,0,0.1) 100%);
+      border-radius: var(--radius-sm);
+      opacity: 0;
+      z-index: -1;
+      transition: opacity 0.4s ease;
+    }
+    
+    .product-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 16px 50px rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.4);
+    }
+    
+    .product-card:hover::before,
+    .product-card:hover::after {
+      opacity: 1;
+    }
+    
+    /* Individual product card colors */
+    .product-card:nth-child(1) { border-color: rgba(255,215,0,0.4); }
+    .product-card:nth-child(1):hover { box-shadow: 0 16px 50px rgba(255,215,0,0.2); }
+    
+    .product-card:nth-child(2) { border-color: rgba(160,82,45,0.4); }
+    .product-card:nth-child(2):hover { box-shadow: 0 16px 50px rgba(160,82,45,0.2); }
+    
+    .product-card:nth-child(3) { border-color: rgba(139,69,19,0.4); }
+    .product-card:nth-child(3):hover { box-shadow: 0 16px 50px rgba(139,69,19,0.2); }
+    
+    .product-card:nth-child(4) { border-color: rgba(230,126,34,0.4); }
+    .product-card:nth-child(4):hover { box-shadow: 0 16px 50px rgba(230,126,34,0.2); }
+    
+    .product-card:nth-child(5) { border-color: rgba(39,174,96,0.4); }
+    .product-card:nth-child(5):hover { box-shadow: 0 16px 50px rgba(39,174,96,0.2); }
+    
+    .product-header {
+      margin-bottom: 16px;
+    }
+    
+    .product-name {
+      font-family: Poppins, sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--charcoal);
+      margin: 0 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .product-icon {
+      font-size: 24px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.6), rgba(255,255,255,0.3));
+      border-radius: 12px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    
+    .product-variants {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    
+    .product-variants li {
+      background: rgba(241,196,15,0.15);
+      color: var(--bronze);
+      font-weight: 600;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 12px;
+      border: 1px solid rgba(241,196,15,0.2);
+    }
+    
+    .info-section {
+      margin-top: 12px;
+    }
+    
+    .info-item {
+      margin-bottom: 8px;
+      background: rgba(255,255,255,0.3);
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.4);
+    }
+    
+    .info-label {
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .info-content {
+      font-size: 12px;
+      color: var(--bronze);
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    
+    .allergen-item .info-label {
+      color: #C0392B;
+    }
+    
+    .allergen-item {
+      background: rgba(231,76,60,0.08);
+      border-color: rgba(231,76,60,0.15);
+    }
+    
+    .storage-item .info-label {
+      color: var(--burgundy);
+    }
+    
+    .serving-item .info-label {
+      color: var(--sage);
+    }
+    
+    .serving-item {
+      background: rgba(39,174,96,0.08);
+      border-color: rgba(39,174,96,0.15);
+    }
+    
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(26,26,26,0.8);
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.2s ease;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(26,26,26,0.2);
+      backdrop-filter: blur(10px);
+    }
+    
+    .back-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(26,26,26,0.3);
+      background: rgba(26,26,26,0.9);
+    }
+    
+    /* Mobile - 1 column */
+    @media (max-width: 768px) {
+      .product-info-container {
+        padding: 16px 12px;
+      }
+      
+      .products-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-top: 20px;
+      }
+      
+      .page-header {
+        padding: 20px 16px;
+        margin-bottom: 20px;
+      }
+      
+      .page-title {
+        font-size: 24px;
+        letter-spacing: 1px;
+      }
+      
+      .page-subtitle {
+        font-size: 14px;
+      }
+      
+      .product-card {
+        padding: 18px;
+      }
+      
+      .product-name {
+        font-size: 16px;
+      }
+      
+      .product-variants li {
+        font-size: 11px;
+        padding: 3px 7px;
+      }
+      
+      .info-item {
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+      
+      .info-label {
+        font-size: 11px;
+      }
+      
+      .info-content {
+        font-size: 12px;
+      }
+    }
+    
+    /* Small Tablet - 2 columns */
+    @media (min-width: 769px) and (max-width: 980px) {
+      .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+      
+      .product-info-container {
+        padding: 24px 18px;
+      }
+      
+      .page-title {
+        font-size: 32px;
+      }
+    }
+    
+    /* Large Tablet - 3 columns with adjusted spacing */
+    @media (min-width: 981px) and (max-width: 1200px) {
+      .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      
+      .product-card {
+        padding: 20px;
+      }
+    }
+    
+    /* Desktop - 3 columns optimized */
+    @media (min-width: 1201px) {
+      .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      
+      .product-card {
+        padding: 24px;
+      }
+    }
+    
+  </style>
+</head>
+<body class="no-select">
+  <header>
+    <div class="container hero">
+      <a href="/" class="brand" style="text-decoration:none;" aria-label="Return to Bold Munch homepage">
+        <img src="new_logo.png" alt="Bold Munch Logo" class="logo" loading="lazy" />
+        <div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:1px">BOLD MUNCH</span>
+          </div>
+          <small>PREMIUM HANDMADE GOODNESS</small>
+        </div>
+      </a>
+    </div>
+  </header>
+
+  <div class="product-info-container">
+    <a href="/" class="back-button" aria-label="Go back to homepage menu">
+      ← Back to Menu
+    </a>
+    
+    <div class="page-header">
+      <h1 class="page-title" role="heading" aria-level="1">🍞 Product Information</h1>
+      <p class="page-subtitle">Everything you need to know about our handmade delights</p>
+    </div>
+
+    <div class="products-grid">
+      <!-- Classic Banana Bread -->
+      <div class="product-card" role="article" aria-labelledby="classic-banana-bread">
+        <div class="product-header">
+          <h3 class="product-name" id="classic-banana-bread">
+            <span class="product-icon" aria-hidden="true">🍌</span>
+            Classic Banana Bread
+          </h3>
+          <ul class="product-variants">
+            <li>Classic Banana Bread</li>
+            <li>Carrot Cake Banana Bread</li>
+          </ul>
+        </div>
+        <div class="info-section">
+          <div class="info-item allergen-item">
+            <div class="info-label">⚠️ Allergens</div>
+            <div class="info-content">Contains Gluten, Milk, Eggs</div>
+          </div>
+          <div class="info-item storage-item">
+            <div class="info-label">📦 Storage</div>
+            <div class="info-content">Keep refrigerated. Best consumed within 3 days.</div>
+          </div>
+          <div class="info-item serving-item">
+            <div class="info-label">☕ Serving Tips</div>
+            <div class="info-content">Best enjoyed warm. Perfect with tea or coffee.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Double Chocolate Banana Bread -->
+      <div class="product-card" role="article" aria-labelledby="double-chocolate-banana-bread">
+        <div class="product-header">
+          <h3 class="product-name" id="double-chocolate-banana-bread">
+            <span class="product-icon" aria-hidden="true">🍫</span>
+            Double Chocolate Banana Bread
+          </h3>
+          <ul class="product-variants">
+            <li>Belgian Dark Chocolate</li>
+            <li>Rich Cocoa Powder</li>
+          </ul>
+        </div>
+        <div class="info-section">
+          <div class="info-item allergen-item">
+            <div class="info-label">⚠️ Allergens</div>
+            <div class="info-content">Contains Gluten, Milk, Eggs, Cocoa</div>
+          </div>
+          <div class="info-item storage-item">
+            <div class="info-label">📦 Storage</div>
+            <div class="info-content">Keep refrigerated. Best consumed within 3 days.</div>
+          </div>
+          <div class="info-item serving-item">
+            <div class="info-label">☕ Serving Tips</div>
+            <div class="info-content">Perfect with milk or dark roast coffee. Decadent when warmed.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nutty Banana Bread -->
+      <div class="product-card" role="article" aria-labelledby="nutty-banana-bread">
+        <div class="product-header">
+          <h3 class="product-name" id="nutty-banana-bread">
+            <span class="product-icon" aria-hidden="true">🥜</span>
+            Nutty Banana Bread
+          </h3>
+          <ul class="product-variants">
+            <li>Chocolate & Nut Banana Bread</li>
+          </ul>
+        </div>
+        <div class="info-section">
+          <div class="info-item allergen-item">
+            <div class="info-label">⚠️ Allergens</div>
+            <div class="info-content">Contains Gluten, Milk, Eggs, Nuts</div>
+          </div>
+          <div class="info-item storage-item">
+            <div class="info-label">📦 Storage</div>
+            <div class="info-content">Keep refrigerated. Best consumed within 3 days.</div>
+          </div>
+          <div class="info-item serving-item">
+            <div class="info-label">☕ Serving Tips</div>
+            <div class="info-content">Best enjoyed warm. Perfect with tea or coffee.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nutella Banana Bread -->
+      <div class="product-card" role="article" aria-labelledby="nutella-banana-bread">
+        <div class="product-header">
+          <h3 class="product-name" id="nutella-banana-bread">
+            <span class="product-icon" aria-hidden="true">🍫</span>
+            Nutella Banana Bread
+          </h3>
+        </div>
+        <div class="info-section">
+          <div class="info-item allergen-item">
+            <div class="info-label">⚠️ Allergens</div>
+            <div class="info-content">Contains Gluten, Milk, Eggs, Hazelnuts</div>
+          </div>
+          <div class="info-item storage-item">
+            <div class="info-label">📦 Storage</div>
+            <div class="info-content">Keep refrigerated. Best consumed within 3 days.</div>
+          </div>
+          <div class="info-item serving-item">
+            <div class="info-label">☕ Serving Tips</div>
+            <div class="info-content">Best enjoyed warm. Perfect with tea or coffee.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Meat Pie -->
+      <div class="product-card" role="article" aria-labelledby="meat-pie">
+        <div class="product-header">
+          <h3 class="product-name" id="meat-pie">
+            <span class="product-icon" aria-hidden="true">🥧</span>
+            Meat Pie
+          </h3>
+        </div>
+        <div class="info-section">
+          <div class="info-item allergen-item">
+            <div class="info-label">⚠️ Allergens</div>
+            <div class="info-content">Contains Gluten, Eggs</div>
+          </div>
+          <div class="info-item storage-item">
+            <div class="info-label">📦 Storage</div>
+            <div class="info-content">Keep refrigerated. Consume within 3 days. Can be reheated.</div>
+          </div>
+          <div class="info-item serving-item">
+            <div class="info-label">🔥 Reheating</div>
+            <div class="info-content">Oven: 160°C for 8-10 mins<br>Microwave: 1–2 mins</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Puff Puff -->
+      <div class="product-card" role="article" aria-labelledby="puff-puff">
+        <div class="product-header">
+          <h3 class="product-name" id="puff-puff">
+            <span class="product-icon" aria-hidden="true">🟡</span>
+            Puff Puff
+          </h3>
+        </div>
+        <div class="info-section">
+          <div class="info-item allergen-item">
+            <div class="info-label">⚠️ Allergens</div>
+            <div class="info-content">Contains Gluten, Milk</div>
+          </div>
+          <div class="info-item storage-item">
+            <div class="info-label">📦 Storage</div>
+            <div class="info-content">Best enjoyed fresh. If refrigerated, consume within 2 days.</div>
+          </div>
+          <div class="info-item serving-item">
+            <div class="info-label">✨ Serving Tips</div>
+            <div class="info-content">Enjoy at peak freshness for best taste and texture.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer style="background: var(--charcoal); color: white; padding: 24px; text-align: center; margin-top: 60px;">
+    <div style="max-width: 600px; margin: 0 auto;">
+      <p style="margin: 0; font-weight: 600;">Made with ❤️ by Bold Munch</p>
+      <p style="margin: 8px 0 0; font-size: 14px; opacity: 0.8;">Premium handmade goodness delivered fresh</p>
+      <p style="margin: 12px 0 0; font-size: 12px; opacity: 0.6;">
+        Powered by <a href="https://www.gen3block.com" target="_blank" style="color: var(--gold); text-decoration: none; font-weight: 600;">Gen3Block AI</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

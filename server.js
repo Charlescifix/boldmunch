@@ -105,9 +105,32 @@ app.get('/contact', (req, res) => {
   res.sendFile(__dirname + '/contact.html');
 });
 
-// Serve product info page
+// Serve product info page (both with and without .html extension)
 app.get('/product-info', (req, res) => {
   res.sendFile(__dirname + '/product-info.html');
+});
+app.get('/product-info.html', (req, res) => {
+  res.sendFile(__dirname + '/product-info.html');
+});
+
+// Serve contact page (both with and without .html extension)  
+app.get('/contact.html', (req, res) => {
+  res.sendFile(__dirname + '/contact.html');
+});
+
+// Serve about page (both with and without .html extension)
+app.get('/about.html', (req, res) => {
+  res.sendFile(__dirname + '/about.html');
+});
+
+// Serve order page (both with and without .html extension)
+app.get('/order.html', (req, res) => {
+  res.sendFile(__dirname + '/order.html');
+});
+
+// Serve home page (both with and without .html extension)
+app.get('/home.html', (req, res) => {
+  res.sendFile(__dirname + '/home.html');
 });
 
 // Serve admin panel

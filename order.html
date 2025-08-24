@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Order Form — Bold Munch</title>
+  <meta name="description" content="Complete your Bold Munch order with our secure checkout form. Enter delivery details and confirm your premium handmade treats.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
@@ -298,7 +299,7 @@
   <div class="container">
     <!-- Header -->
     <div class="header">
-      <a href="/" style="display:inline-block;"><img src="new_logo.png" alt="Bold Munch Logo" class="logo" /></a>
+      <a href="/" style="display:inline-block;" aria-label="Return to Bold Munch homepage"><img src="new_logo.png" alt="Bold Munch Logo" class="logo" loading="lazy" /></a>
       <div class="tagline">Premium Handmade Goodness</div>
       <div class="quote">"Fresh ingredients, bold flavors, made with love"</div>
     </div>
@@ -319,20 +320,20 @@
         
         <div class="form-group">
           <label for="customerName" class="form-label">Full Name *</label>
-          <input type="text" id="customerName" name="customerName" class="form-input" required>
-          <div class="error-message hidden" id="nameError"></div>
+          <input type="text" id="customerName" name="customerName" class="form-input" required aria-describedby="nameError" aria-label="Enter your full name">
+          <div class="error-message hidden" id="nameError" role="alert" aria-live="polite"></div>
         </div>
         
         <div class="form-group">
           <label for="customerEmail" class="form-label">Email Address *</label>
-          <input type="email" id="customerEmail" name="customerEmail" class="form-input" required>
-          <div class="error-message hidden" id="emailError"></div>
+          <input type="email" id="customerEmail" name="customerEmail" class="form-input" required aria-describedby="emailError" aria-label="Enter your email address">
+          <div class="error-message hidden" id="emailError" role="alert" aria-live="polite"></div>
         </div>
         
         <div class="form-group">
           <label for="customerPhone" class="form-label">Phone Number *</label>
-          <input type="tel" id="customerPhone" name="customerPhone" class="form-input" required>
-          <div class="error-message hidden" id="phoneError"></div>
+          <input type="tel" id="customerPhone" name="customerPhone" class="form-input" required aria-describedby="phoneError" aria-label="Enter your phone number">
+          <div class="error-message hidden" id="phoneError" role="alert" aria-live="polite"></div>
         </div>
       </div>
 
@@ -343,16 +344,16 @@
         <div class="form-group">
           <label for="deliveryAddress" class="form-label">Full Address *</label>
           <textarea id="deliveryAddress" name="deliveryAddress" class="form-input" rows="3" 
-                    placeholder="House number, street name, area..." required></textarea>
-          <div class="error-message hidden" id="addressError"></div>
+                    placeholder="House number, street name, area..." required aria-describedby="addressError" aria-label="Enter your full delivery address"></textarea>
+          <div class="error-message hidden" id="addressError" role="alert" aria-live="polite"></div>
         </div>
         
         <div class="form-group">
           <label for="postcode" class="form-label">Postcode *</label>
           <input type="text" id="postcode" name="postcode" class="form-input" 
-                 placeholder="e.g., NN5 4YA" style="text-transform:uppercase" required>
-          <div class="error-message hidden" id="postcodeError"></div>
-          <div class="success-message hidden" id="postcodeSuccess"></div>
+                 placeholder="e.g., NN5 4YA" style="text-transform:uppercase" required aria-describedby="postcodeError postcodeSuccess" aria-label="Enter your postcode">
+          <div class="error-message hidden" id="postcodeError" role="alert" aria-live="polite"></div>
+          <div class="success-message hidden" id="postcodeSuccess" role="status" aria-live="polite"></div>
         </div>
         
         <div id="deliveryInfo" class="delivery-info hidden">
@@ -367,7 +368,7 @@
           <!-- Total breakdown will be shown here -->
         </div>
         
-        <button type="submit" class="btn" id="submitBtn" disabled>
+        <button type="submit" class="btn" id="submitBtn" disabled aria-label="Complete your order and proceed to payment">
           <span id="submitText">Complete Order</span>
         </button>
         

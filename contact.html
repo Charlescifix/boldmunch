@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us — Bold Munch</title>
+  <meta name="description" content="Get in touch with Bold Munch for bulk orders, partnerships, and enquiries. We offer UK-wide delivery and wholesale opportunities.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/main.css">
+  <style>
+    .contact-container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 40px 20px;
+      text-align: center;
+    }
+    
+    .contact-hero {
+      margin-bottom: 50px;
+    }
+    
+    .contact-hero h1 {
+      font-family: Poppins, sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--charcoal);
+      margin-bottom: 16px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    .contact-hero p {
+      font-size: 18px;
+      color: var(--bronze);
+      font-weight: 600;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .contact-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 60px;
+    }
+    
+    @media (max-width: 768px) {
+      .contact-options {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+    }
+    
+    .contact-option {
+      background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(248,249,250,0.8));
+      border-radius: 24px;
+      padding: 40px 30px;
+      box-shadow: 0 16px 50px rgba(0,0,0,0.1);
+      backdrop-filter: blur(16px);
+      border: 2px solid rgba(255,255,255,0.6);
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .contact-option:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 60px rgba(0,0,0,0.15);
+    }
+    
+    .bulk-order {
+      background: linear-gradient(145deg, rgba(255,215,0,0.1), rgba(255,193,7,0.05));
+      border-color: rgba(255,215,0,0.3);
+    }
+    
+    .bulk-order:hover {
+      box-shadow: 0 24px 60px rgba(255,215,0,0.2);
+    }
+    
+    .make-enquiry {
+      background: linear-gradient(145deg, rgba(39,174,96,0.1), rgba(46,204,113,0.05));
+      border-color: rgba(39,174,96,0.3);
+    }
+    
+    .make-enquiry:hover {
+      box-shadow: 0 24px 60px rgba(39,174,96,0.2);
+    }
+    
+    .option-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      display: block;
+    }
+    
+    .option-title {
+      font-family: Poppins, sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--charcoal);
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .option-description {
+      font-size: 16px;
+      color: var(--bronze);
+      line-height: 1.6;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+    
+    .contact-btn {
+      background: linear-gradient(145deg, var(--burgundy), #D35400);
+      color: white;
+      font-weight: 800;
+      padding: 16px 32px;
+      border-radius: 50px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 25px rgba(230,126,34,0.3);
+      margin-top: 10px;
+    }
+    
+    .contact-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 35px rgba(230,126,34,0.4);
+    }
+    
+    .bulk-order .contact-btn {
+      background: linear-gradient(145deg, #FFD700, #FFA500);
+      color: var(--charcoal);
+      box-shadow: 0 8px 25px rgba(255,215,0,0.3);
+    }
+    
+    .bulk-order .contact-btn:hover {
+      box-shadow: 0 12px 35px rgba(255,215,0,0.4);
+    }
+    
+    .make-enquiry .contact-btn {
+      background: linear-gradient(145deg, #27AE60, #1E8449);
+      color: white;
+      box-shadow: 0 8px 25px rgba(39,174,96,0.3);
+    }
+    
+    .make-enquiry .contact-btn:hover {
+      box-shadow: 0 12px 35px rgba(39,174,96,0.4);
+    }
+    
+    .form-container {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      backdrop-filter: blur(8px);
+    }
+    
+    .form-content {
+      background: white;
+      border-radius: 24px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 40px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.2);
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    
+    .form-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .form-header h2 {
+      font-family: Poppins, sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--charcoal);
+      margin-bottom: 10px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      font-weight: 700;
+      color: var(--charcoal);
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid rgba(241,196,15,0.3);
+      border-radius: 12px;
+      background: linear-gradient(145deg, #FFFFFF, #F8F9FA);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--charcoal);
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(241,196,15,0.2);
+    }
+    
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    .form-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 30px;
+    }
+    
+    .form-btn {
+      flex: 1;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 16px;
+      border: none;
+    }
+    
+    .form-btn-cancel {
+      background: transparent;
+      border: 2px solid var(--gold) !important;
+      color: var(--charcoal);
+    }
+    
+    .form-btn-submit {
+      background: linear-gradient(145deg, var(--burgundy), #D35400);
+      color: white;
+    }
+    
+    .form-btn:hover {
+      transform: translateY(-2px);
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      font-size: 28px;
+      font-weight: bold;
+      color: var(--bronze);
+      cursor: pointer;
+      width: 44px;
+      height: 44px;
+      border-radius: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    
+    .close-btn:hover {
+      background: rgba(139,69,19,0.1);
+      transform: scale(1.1);
+    }
+    
+    .highlight-text {
+      color: var(--burgundy);
+      font-weight: 800;
+    }
+    
+    .uk-delivery {
+      background: linear-gradient(145deg, rgba(39,174,96,0.1), rgba(46,204,113,0.05));
+      padding: 16px;
+      border-radius: 12px;
+      margin: 20px 0;
+      border-left: 4px solid var(--sage);
+    }
+    
+    .uk-delivery p {
+      margin: 8px 0;
+      font-weight: 700;
+      color: var(--sage);
+      font-size: 14px;
+    }
+    
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: linear-gradient(145deg, var(--burgundy), #D35400);
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(230,126,34,0.3);
+      border: 2px solid rgba(255,255,255,0.4);
+    }
+    
+    .back-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(230,126,34,0.4);
+      color: white;
+    }
+  </style>
+</head>
+<body class="no-select">
+  <header>
+    <div class="container hero">
+      <a href="/" class="brand" style="text-decoration:none;" aria-label="Return to Bold Munch homepage">
+        <img src="new_logo.png" alt="Bold Munch Logo" class="logo" loading="lazy" />
+        <div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:24px;font-weight:900;text-transform:uppercase;letter-spacing:1px">BOLD MUNCH</span>
+          </div>
+          <small>PREMIUM HANDMADE GOODNESS</small>
+        </div>
+      </a>
+      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+        <div class="delivery-pill" title="We deliver on Saturdays">
+          <div class="delivery-main">
+            Delivery Day: Saturdays
+          </div>
+          <div class="delivery-deadline">
+            📅 Order before 9AM Friday
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="contact-container">
+      <div style="text-align: left; margin-bottom: 20px;">
+        <a href="/" onclick="window.history.back(); return false;" class="back-btn" aria-label="Go back to previous page or homepage">
+          ← Back to Menu
+        </a>
+      </div>
+      <div class="contact-hero">
+        <h1>📞 Contact Us</h1>
+        <p>Choose how you'd like to get in touch with Bold Munch. We're here to help with all your baking needs!</p>
+      </div>
+      
+      <div class="contact-options">
+        <!-- Bulk Order Option -->
+        <div class="contact-option bulk-order">
+          <span class="option-icon">🚛</span>
+          <h2 class="option-title">Bulk Orders</h2>
+          <p class="option-description">
+            Perfect for <span class="highlight-text">events, offices, and special occasions</span>! 
+            We offer flexible ordering with advance notice and <span class="highlight-text">deliver across the United Kingdom</span>. 
+            Whether you need 10 or 100 items, we've got you covered with our premium handmade treats.
+          </p>
+          <div class="uk-delivery">
+            <p>🇬🇧 UK-Wide Delivery Available</p>
+            <p>📅 Flexible Delivery Days for Large Orders</p>
+            <p>💼 Corporate Accounts Welcome</p>
+          </div>
+          <button class="contact-btn" onclick="showBulkOrderForm()" aria-label="Request bulk order quote form">
+            Request Bulk Order Quote
+          </button>
+        </div>
+
+        <!-- Make Enquiry Option -->
+        <div class="contact-option make-enquiry">
+          <span class="option-icon">🤝</span>
+          <h2 class="option-title">Make Enquiry</h2>
+          <p class="option-description">
+            Interested in <span class="highlight-text">partnerships, wholesale opportunities</span>, or have questions about our products? 
+            We welcome collaboration with <span class="highlight-text">cafes, restaurants, retail stores</span>, and other businesses. 
+            Let's discuss how we can work together to bring Bold Munch's premium treats to your customers.
+          </p>
+          <div class="uk-delivery">
+            <p>🤝 Partnership Opportunities</p>
+            <p>🏪 Wholesale & Retail Enquiries</p>
+            <p>💡 Custom Product Development</p>
+          </div>
+          <button class="contact-btn" onclick="showEnquiryForm()" aria-label="Send general enquiry form">
+            Send General Enquiry
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bulk Order Form Modal -->
+  <div class="form-container" id="bulkOrderForm">
+    <div class="form-content">
+      <button class="close-btn" onclick="hideForm('bulkOrderForm')" aria-label="Close bulk order form">&times;</button>
+      <div class="form-header">
+        <h2>🚛 Bulk Order Request</h2>
+        <p>Fill out the form below and we'll redirect you to WhatsApp to finalize your bulk order details.</p>
+      </div>
+      <form id="bulkOrderFormData">
+        <div class="form-group">
+          <label for="bulkName">Full Name *</label>
+          <input type="text" id="bulkName" name="name" required aria-label="Enter your full name">
+        </div>
+        <div class="form-group">
+          <label for="bulkPhone">Phone Number *</label>
+          <input type="tel" id="bulkPhone" name="phone" required aria-label="Enter your phone number">
+        </div>
+        <div class="form-group">
+          <label for="bulkEmail">Email Address *</label>
+          <input type="email" id="bulkEmail" name="email" required aria-label="Enter your email address">
+        </div>
+        <div class="form-group">
+          <label for="bulkMessage">Order Details & Requirements *</label>
+          <textarea id="bulkMessage" name="message" placeholder="Please describe your bulk order requirements, quantities needed, delivery location, and preferred delivery date..." required aria-label="Describe your bulk order requirements"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="form-btn form-btn-cancel" onclick="hideForm('bulkOrderForm')" aria-label="Cancel bulk order form">Cancel</button>
+          <button type="submit" class="form-btn form-btn-submit" aria-label="Send bulk order request via WhatsApp">Send to WhatsApp</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Make Enquiry Form Modal -->
+  <div class="form-container" id="enquiryForm">
+    <div class="form-content">
+      <button class="close-btn" onclick="hideForm('enquiryForm')" aria-label="Close enquiry form">&times;</button>
+      <div class="form-header">
+        <h2>🤝 General Enquiry</h2>
+        <p>Tell us about your enquiry and we'll get back to you as soon as possible.</p>
+      </div>
+      <form id="enquiryFormData">
+        <div class="form-group">
+          <label for="enquiryName">Full Name *</label>
+          <input type="text" id="enquiryName" name="name" required aria-label="Enter your full name">
+        </div>
+        <div class="form-group">
+          <label for="enquiryPhone">Phone Number *</label>
+          <input type="tel" id="enquiryPhone" name="phone" required aria-label="Enter your phone number">
+        </div>
+        <div class="form-group">
+          <label for="enquiryEmail">Email Address *</label>
+          <input type="email" id="enquiryEmail" name="email" required aria-label="Enter your email address">
+        </div>
+        <div class="form-group">
+          <label for="enquiryMessage">Your Enquiry *</label>
+          <textarea id="enquiryMessage" name="message" placeholder="Please describe your enquiry, partnership interest, or any questions you have..." required aria-label="Describe your enquiry or questions"></textarea>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="form-btn form-btn-cancel" onclick="hideForm('enquiryForm')" aria-label="Cancel enquiry form">Cancel</button>
+          <button type="submit" class="form-btn form-btn-submit" aria-label="Send general enquiry">Send Enquiry</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function showBulkOrderForm() {
+      document.getElementById('bulkOrderForm').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function showEnquiryForm() {
+      document.getElementById('enquiryForm').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function hideForm(formId) {
+      document.getElementById(formId).style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    // Handle bulk order form submission
+    document.getElementById('bulkOrderFormData').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('bulkName').value;
+      const phone = document.getElementById('bulkPhone').value;
+      const email = document.getElementById('bulkEmail').value;
+      const message = document.getElementById('bulkMessage').value;
+      
+      const whatsappMessage = `Hello Bold Munch! 🚛 BULK ORDER REQUEST
+
+Name: ${name}
+Phone: ${phone}
+Email: ${email}
+
+Order Details:
+${message}
+
+I'm interested in placing a bulk order with flexible delivery options across the UK. Please provide me with a quote and availability details.`;
+
+      const whatsappURL = `https://wa.me/447123456789?text=${encodeURIComponent(whatsappMessage)}`;
+      window.open(whatsappURL, '_blank');
+      
+      hideForm('bulkOrderForm');
+      this.reset();
+    });
+
+    // Handle enquiry form submission
+    document.getElementById('enquiryFormData').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const name = document.getElementById('enquiryName').value;
+      const phone = document.getElementById('enquiryPhone').value;
+      const email = document.getElementById('enquiryEmail').value;
+      const message = document.getElementById('enquiryMessage').value;
+      
+      // For now, we'll show an alert. You can replace this with actual form submission logic
+      alert(`Thank you ${name}! Your enquiry has been received. We'll get back to you within 24 hours at ${email} or ${phone}.`);
+      
+      hideForm('enquiryForm');
+      this.reset();
+    });
+
+    // Close form when clicking outside
+    document.querySelectorAll('.form-container').forEach(container => {
+      container.addEventListener('click', function(e) {
+        if (e.target === this) {
+          hideForm(this.id);
+        }
+      });
+    });
+  </script>
+</body>
+</html>
