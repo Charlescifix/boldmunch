@@ -23,8 +23,12 @@ app.use(helmet({
 }));
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://yourdomain.com'] 
-    : ['http://localhost:3000', 'http://127.0.0.1:5500', 'http://127.0.0.1:8000'],
+    ? [
+        'https://boldmunch-production.up.railway.app',
+        'https://*.up.railway.app',
+        process.env.FRONTEND_URL
+      ].filter(Boolean)
+    : ['http://localhost:3000', 'http://localhost:3002', 'http://127.0.0.1:5500', 'http://127.0.0.1:8000'],
   credentials: true
 }));
 
@@ -101,6 +105,11 @@ app.get('/contact', (req, res) => {
   res.sendFile(__dirname + '/contact.html');
 });
 
+// Serve product info page
+app.get('/product-info', (req, res) => {
+  res.sendFile(__dirname + '/product-info.html');
+});
+
 // Serve admin panel
 app.get('/admin', (req, res) => {
   res.sendFile(__dirname + '/admin.html');
@@ -108,7 +117,13 @@ app.get('/admin', (req, res) => {
 
 // 404 handler
 app.use('*', (req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+  // If it's an API request, return JSON
+  if (req.path.startsWith('/api/')) {
+    res.status(404).json({ error: 'API route not found' });
+  } else {
+    // For page requests, redirect to home page
+    res.redirect('/');
+  }
 });
 
 // Error handling middleware
