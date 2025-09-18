@@ -476,6 +476,22 @@
   </div>
 
   <script>
+    // Fetch WhatsApp number from server
+    let whatsappNumber = '+44xxxxxxxxxx'; // fallback
+
+    async function fetchWhatsAppNumber() {
+      try {
+        const response = await fetch('/api/config/whatsapp');
+        const data = await response.json();
+        whatsappNumber = data.whatsappNumber;
+      } catch (error) {
+        console.warn('Failed to fetch WhatsApp number, using fallback');
+      }
+    }
+
+    // Initialize WhatsApp number on page load
+    fetchWhatsAppNumber();
+
     function showBulkOrderForm() {
       document.getElementById('bulkOrderForm').style.display = 'block';
       document.body.style.overflow = 'hidden';
@@ -511,7 +527,7 @@ ${message}
 
 I'm interested in placing a bulk order with flexible delivery options across the UK. Please provide me with a quote and availability details.`;
 
-      const whatsappURL = `https://wa.me/447123456789?text=${encodeURIComponent(whatsappMessage)}`;
+      const whatsappURL = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`;
       window.open(whatsappURL, '_blank');
       
       hideForm('bulkOrderForm');
@@ -521,15 +537,26 @@ I'm interested in placing a bulk order with flexible delivery options across the
     // Handle enquiry form submission
     document.getElementById('enquiryFormData').addEventListener('submit', function(e) {
       e.preventDefault();
-      
+
       const name = document.getElementById('enquiryName').value;
       const phone = document.getElementById('enquiryPhone').value;
       const email = document.getElementById('enquiryEmail').value;
       const message = document.getElementById('enquiryMessage').value;
-      
-      // For now, we'll show an alert. You can replace this with actual form submission logic
-      alert(`Thank you ${name}! Your enquiry has been received. We'll get back to you within 24 hours at ${email} or ${phone}.`);
-      
+
+      const whatsappMessage = `Hello Bold Munch! 🤝 GENERAL ENQUIRY
+
+Name: ${name}
+Phone: ${phone}
+Email: ${email}
+
+Enquiry Details:
+${message}
+
+I'm interested in learning more about Bold Munch and would appreciate your response. Thank you!`;
+
+      const whatsappURL = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`;
+      window.open(whatsappURL, '_blank');
+
       hideForm('enquiryForm');
       this.reset();
     });

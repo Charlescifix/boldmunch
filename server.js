@@ -85,6 +85,13 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
+// WhatsApp configuration endpoint
+app.get('/api/config/whatsapp', (req, res) => {
+  res.json({
+    whatsappNumber: process.env.WHATSAPP_NUMBER || '+44xxxxxxxxxx'
+  });
+});
+
 // Serve main page
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/home.html');
