@@ -23,9 +23,24 @@ const getDeliverySettings = () => {
   const freeMinutes = parseInt(process.env.DELIVERY_FREE_MINUTES) || 7;
   const maxMinutes = parseInt(process.env.DELIVERY_MAX_MINUTES) || 15;
   const standardFee = parseFloat(process.env.DELIVERY_STANDARD_FEE) || 3.00;
-  
-  console.log('🚚 Delivery settings:', { freeMinutes, maxMinutes, standardFee });
-  return { freeMinutes, maxMinutes, standardFee };
+  const ukFee = parseFloat(process.env.DELIVERY_UK_FEE) || 5.00;
+
+  console.log('🚚 Delivery settings:', { freeMinutes, maxMinutes, standardFee, ukFee });
+  return { freeMinutes, maxMinutes, standardFee, ukFee };
+};
+
+// Helper function to determine if a postcode result is in England only (excluding Scotland, Wales, and Northern Ireland)
+const isEligibleForUKDelivery = (postcodeData) => {
+  if (!postcodeData || !postcodeData.country) {
+    return false;
+  }
+
+  // Must be England only
+  if (postcodeData.country !== 'England') {
+    return false;
+  }
+
+  return true;
 };
 
 class DeliveryZoneManager {
@@ -35,13 +50,13 @@ class DeliveryZoneManager {
 
 
   // Calculate delivery fee using real-time Matrix API
-  async calculateDeliveryFee(latitude, longitude) {
+  async calculateDeliveryFee(latitude, longitude, postcodeData = null) {
     try {
       console.log(`🔍 Calculating delivery fee for coordinates: [${longitude}, ${latitude}]`);
       
       const hubCoords = getHubCoordinates();
       const customerCoords = [longitude, latitude];
-      const { freeMinutes, maxMinutes, standardFee } = getDeliverySettings();
+      const { freeMinutes, maxMinutes, standardFee, ukFee } = getDeliverySettings();
 
       if (!this.apiKey) {
         throw new Error('OPENROUTESERVICE_API_KEY not configured');
@@ -90,16 +105,29 @@ class DeliveryZoneManager {
           reason: `${durationMinutes} min drive (${freeMinutes+1}-${maxMinutes} min = £${standardFee})`
         };
       } else {
-        console.log(`❌ Outside ${maxMinutes}-minute delivery area (${durationMinutes} min drive)`);
-        return {
-          inDeliveryArea: false,
-          deliveryFee: null,
-          zoneName: 'Outside delivery area',
-          maxDistanceMinutes: null,
-          actualDurationMinutes: durationMinutes,
-          requiresEnquiry: true,
-          reason: `${durationMinutes} min drive (>${maxMinutes} min = outside area)`
-        };
+        // Check if location is eligible for UK delivery (England only, excluding Scotland, Wales, and Northern Ireland)
+        if (postcodeData && isEligibleForUKDelivery(postcodeData)) {
+          console.log(`🇬🇧 Outside ${maxMinutes}-minute local area but eligible for UK delivery (${durationMinutes} min drive)`);
+          return {
+            inDeliveryArea: true,
+            deliveryFee: ukFee,
+            zoneName: 'UK Delivery Zone',
+            maxDistanceMinutes: null,
+            actualDurationMinutes: durationMinutes,
+            reason: `${durationMinutes} min drive (England delivery = £${ukFee})`
+          };
+        } else {
+          console.log(`❌ Outside ${maxMinutes}-minute delivery area and not eligible for UK delivery (${durationMinutes} min drive)`);
+          return {
+            inDeliveryArea: false,
+            deliveryFee: null,
+            zoneName: 'Outside delivery area',
+            maxDistanceMinutes: null,
+            actualDurationMinutes: durationMinutes,
+            requiresEnquiry: true,
+            reason: `${durationMinutes} min drive (>${maxMinutes} min = outside area)`
+          };
+        }
       }
 
     } catch (error) {
@@ -125,8 +153,8 @@ class DeliveryZoneManager {
   // Get delivery zone information for frontend display (no database needed)
   async getDeliveryZones() {
     try {
-      const { freeMinutes, maxMinutes, standardFee } = getDeliverySettings();
-      
+      const { freeMinutes, maxMinutes, standardFee, ukFee } = getDeliverySettings();
+
       return [
         {
           name: 'Free Delivery Zone',
@@ -139,6 +167,12 @@ class DeliveryZoneManager {
           delivery_fee: standardFee,
           max_distance_minutes: maxMinutes,
           description: `£${standardFee} delivery within ${maxMinutes} minutes drive`
+        },
+        {
+          name: 'UK Delivery Zone',
+          delivery_fee: ukFee,
+          max_distance_minutes: null,
+          description: `£${ukFee} delivery to England (excluding Scotland, Wales, Northern Ireland)`
         }
       ];
     } catch (error) {
@@ -149,4 +183,8 @@ class DeliveryZoneManager {
 
 }
 
-module.exports = new DeliveryZoneManager();
+// Create instance and export with additional functions
+const deliveryZoneManager = new DeliveryZoneManager();
+deliveryZoneManager.getDeliverySettings = getDeliverySettings;
+
+module.exports = deliveryZoneManager;

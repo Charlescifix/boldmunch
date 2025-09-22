@@ -45,7 +45,8 @@ router.post('/validate-postcode', async (req, res) => {
     // Calculate delivery fee using time-based polygons
     const deliveryInfo = await deliveryZones.calculateDeliveryFee(
       postcodeResult.latitude,
-      postcodeResult.longitude
+      postcodeResult.longitude,
+      postcodeResult
     );
 
     const response = {
@@ -206,7 +207,8 @@ router.get('/check/:postcode', async (req, res) => {
 
     const deliveryInfo = await deliveryZones.calculateDeliveryFee(
       postcodeResult.latitude,
-      postcodeResult.longitude
+      postcodeResult.longitude,
+      postcodeResult
     );
 
     const duration = Date.now() - startTime;
