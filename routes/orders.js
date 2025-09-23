@@ -70,7 +70,8 @@ router.post('/create', async (req, res) => {
     // Calculate delivery fee using time-based polygons
     const deliveryInfo = await deliveryZones.calculateDeliveryFee(
       postcodeResult.latitude,
-      postcodeResult.longitude
+      postcodeResult.longitude,
+      postcodeResult
     );
 
     if (!deliveryInfo.inDeliveryArea) {
